@@ -133,34 +133,11 @@ Cronograma
 
 Tecnologias e Ferramentas 
 
-     Linguagem: Python
-     Framework: Django para backend, React para frontend.
+
      Controle de Versão: Git com GitHub.
      
 
-5. Documento de API 
 
-Documento de API 
-
-Versão 1.0 
-
-Introdução 
-
-A API do "Simulador de Experimentos Educativos" permite a interação com os dados de simulação. 
-
-Endpoints 
-
-     
-
-    GET /api/experiments: Recupera a lista de experimentos disponíveis. 
-         Parâmetros: Nenhum
-         Resposta: JSON com detalhes dos experimentos.
-         
-     
-
-    POST /api/simulation/start: Inicia uma nova simulação. 
-         Parâmetros: experiment_id, parameters
-         Resposta: JSON com status e ID da simulação.
          
      
 
