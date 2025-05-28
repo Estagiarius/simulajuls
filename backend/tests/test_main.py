@@ -1,6 +1,8 @@
 from fastapi.testclient import TestClient
 from backend.main import app # Ajuste o import conforme a localização de 'app'
 # from backend.main import AcidBaseSimulationParams, perform_acid_base_simulation # Para testes diretos da lógica
+# from backend.main import ProjectileLaunchParams, perform_projectile_launch_simulation # Para testes diretos da lógica de lançamento
+# from backend.main import MendelianCrossParams, perform_mendelian_cross_simulation # Para testes diretos da lógica de genética
 
 client = TestClient(app)
 
@@ -123,3 +125,183 @@ def test_simulation_invalid_input_zero_volume():
 #     assert result.final_ph == 7.0
 #     assert result.status == "Neutra"
 #     assert result.indicator_color == "Incolor" # Fenolftaleína em pH 7 é incolor
+
+# Testes para o endpoint de simulação de Lançamento Oblíquo
+def test_projectile_simulation_default_params():
+    response = client.post("/api/simulation/physics/projectile-launch/start", json={
+        "initial_velocity": 20,
+        "launch_angle": 45,
+        # initial_height e gravity usarão defaults do modelo (0.0 e 9.81)
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["max_range"] > 0
+    assert data["max_height"] > 0
+    assert data["total_time"] > 0
+    assert len(data["trajectory"]) > 1 # Deve ter pelo menos o ponto inicial e final
+    assert data["parameters_used"]["initial_velocity"] == 20
+    assert data["parameters_used"]["launch_angle"] == 45
+    assert data["parameters_used"]["initial_height"] == 0.0
+    assert data["parameters_used"]["gravity"] == 9.81
+
+def test_projectile_simulation_with_initial_height():
+    response = client.post("/api/simulation/physics/projectile-launch/start", json={
+        "initial_velocity": 20,
+        "launch_angle": 30,
+        "initial_height": 10,
+        "gravity": 10 # Usar g=10 para facilitar cálculos mentais se necessário
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["max_range"] > 0
+    assert data["max_height"] > 10 # Deve ser maior que a altura inicial
+    assert data["total_time"] > 0
+    assert data["trajectory"][0]["y"] == 10 # Ponto inicial na altura inicial
+    assert data["trajectory"][-1]["y"] == 0 # Ponto final no solo
+
+def test_projectile_simulation_invalid_velocity():
+    response = client.post("/api/simulation/physics/projectile-launch/start", json={
+        "initial_velocity": 0, "launch_angle": 45
+    })
+    assert response.status_code == 400
+    assert "Velocidade inicial deve ser positiva" in response.json().get("detail", "")
+
+def test_projectile_simulation_invalid_angle_too_low():
+    response = client.post("/api/simulation/physics/projectile-launch/start", json={
+        "initial_velocity": 10, "launch_angle": 0 
+    })
+    assert response.status_code == 400
+    assert "Ângulo de lançamento deve estar entre 0 e 90 graus (exclusive)" in response.json().get("detail", "")
+    
+def test_projectile_simulation_invalid_angle_too_high():
+    response = client.post("/api/simulation/physics/projectile-launch/start", json={
+        "initial_velocity": 10, "launch_angle": 90
+    })
+    assert response.status_code == 400
+    assert "Ângulo de lançamento deve estar entre 0 e 90 graus (exclusive)" in response.json().get("detail", "")
+
+def test_projectile_simulation_invalid_height():
+    response = client.post("/api/simulation/physics/projectile-launch/start", json={
+        "initial_velocity": 10, "launch_angle": 45, "initial_height": -1
+    })
+    assert response.status_code == 400
+    assert "Altura inicial não pode ser negativa" in response.json().get("detail", "")
+
+def test_projectile_simulation_invalid_gravity():
+    response = client.post("/api/simulation/physics/projectile-launch/start", json={
+        "initial_velocity": 10, "launch_angle": 45, "gravity": 0
+    })
+    assert response.status_code == 400
+    assert "Gravidade deve ser positiva" in response.json().get("detail", "")
+
+# Exemplo de teste direto da lógica (se a função estiver importável)
+# from backend.main import perform_projectile_launch_simulation, ProjectileLaunchParams
+# def test_direct_projectile_logic():
+#     params = ProjectileLaunchParams(initial_velocity=10, launch_angle=30, initial_height=5, gravity=10)
+#     result = perform_projectile_launch_simulation(params)
+#     assert result.max_height > 5
+#     # Adicionar mais asserções específicas baseadas em cálculos manuais se desejado
+
+# Testes para o endpoint de simulação de Genética Mendeliana
+def test_mendelian_cross_homozygous_dominant_x_recessive():
+    response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
+        "parent1_genotype": "AA",
+        "parent2_genotype": "aa",
+        "dominant_allele": "A",
+        "recessive_allele": "a",
+        "dominant_phenotype_description": "Dominante",
+        "recessive_phenotype_description": "Recessivo"
+    })
+    assert response.status_code == 200
+    data = response.json()
+    # Quadro de Punnett esperado: [['Aa', 'Aa'], ['Aa', 'Aa']]
+    assert data["punnett_square"] == [["Aa", "Aa"], ["Aa", "Aa"]]
+    # Genótipos: 100% Aa
+    assert len(data["offspring_genotypes"]) == 1
+    assert data["offspring_genotypes"][0]["genotype"] == "Aa"
+    assert data["offspring_genotypes"][0]["percentage"] == 100.0
+    # Fenótipos: 100% Dominante
+    assert len(data["offspring_phenotypes"]) == 1
+    assert data["offspring_phenotypes"][0]["phenotype_description"] == "Dominante"
+    assert data["offspring_phenotypes"][0]["percentage"] == 100.0
+
+def test_mendelian_cross_heterozygous_x_heterozygous():
+    response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
+        "parent1_genotype": "Aa",
+        "parent2_genotype": "Aa"
+        # Usar defaults para alelos e fenótipos
+    })
+    assert response.status_code == 200
+    data = response.json()
+    # Quadro de Punnett esperado: [['AA', 'Aa'], ['Aa', 'aa']] (ou ordem diferente mas mesmos conteúdos)
+    # A lógica de ordenação interna pode variar, então verificamos os componentes
+    flat_punnett = [item for sublist in data["punnett_square"] for item in sublist]
+    assert sorted(flat_punnett) == sorted(["AA", "Aa", "Aa", "aa"])
+    
+    # Genótipos: 25% AA, 50% Aa, 25% aa
+    genotypes = {g["genotype"]: g["percentage"] for g in data["offspring_genotypes"]}
+    assert genotypes.get("AA") == 25.0
+    assert genotypes.get("Aa") == 50.0
+    assert genotypes.get("aa") == 25.0
+    
+    # Fenótipos: 75% Dominante, 25% Recessivo (usando defaults "Fenótipo Dominante", "Fenótipo Recessivo")
+    phenotypes = {p["phenotype_description"]: p["percentage"] for p in data["offspring_phenotypes"]}
+    assert phenotypes.get("Fenótipo Dominante") == 75.0
+    assert phenotypes.get("Fenótipo Recessivo") == 25.0
+
+def test_mendelian_cross_heterozygous_x_recessive():
+    response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
+        "parent1_genotype": "Aa",
+        "parent2_genotype": "aa",
+        "dominant_allele": "B", # Testar com outros alelos
+        "recessive_allele": "b",
+        "dominant_phenotype_description": "Preto",
+        "recessive_phenotype_description": "Branco"
+    })
+    assert response.status_code == 200
+    data = response.json()
+    flat_punnett = sorted([item for sublist in data["punnett_square"] for item in sublist])
+    # O backend normaliza 'Ba' para 'Bb' e 'bB' para 'Bb'
+    # E 'aa' (se input) para 'bb' (se recessive_allele='b')
+    # Então, para Aa x aa com B/b, esperamos Bb, Bb, bb, bb
+    assert flat_punnett == sorted(["Bb", "Bb", "bb", "bb"]) 
+    
+    genotypes = {g["genotype"]: g["percentage"] for g in data["offspring_genotypes"]}
+    assert genotypes.get("Bb") == 50.0 
+    assert genotypes.get("bb") == 50.0
+    
+    phenotypes = {p["phenotype_description"]: p["percentage"] for p in data["offspring_phenotypes"]}
+    assert phenotypes.get("Preto") == 50.0
+    assert phenotypes.get("Branco") == 50.0
+
+def test_mendelian_cross_invalid_genotype_length():
+    response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
+        "parent1_genotype": "A", "parent2_genotype": "Aa"
+    })
+    assert response.status_code == 400
+    assert "Genótipo 'A' inválido. Deve ter 2 alelos." in response.json().get("detail", "")
+
+def test_mendelian_cross_invalid_genotype_char():
+    response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
+        "parent1_genotype": "AX", "parent2_genotype": "Aa"
+    })
+    assert response.status_code == 400
+    # A mensagem exata pode variar dependendo da implementação da validação de alelos
+    assert "Alelo 'X' no genótipo 'AX' não corresponde aos alelos definidos" in response.json().get("detail", "")
+
+
+def test_mendelian_cross_invalid_allele_definition_same():
+    response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
+        "parent1_genotype": "Aa", "parent2_genotype": "Aa",
+        "dominant_allele": "A", "recessive_allele": "A"
+    })
+    assert response.status_code == 400
+    assert "Alelos dominante e recessivo devem ser caracteres únicos e diferentes." in response.json().get("detail", "")
+
+def test_mendelian_cross_invalid_allele_definition_long():
+    response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
+        "parent1_genotype": "Aa", "parent2_genotype": "Aa",
+        "dominant_allele": "Ab", "recessive_allele": "a"
+    })
+    assert response.status_code == 400
+    assert "Alelos dominante e recessivo devem ser caracteres únicos e diferentes." in response.json().get("detail", "")
