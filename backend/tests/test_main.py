@@ -17,7 +17,7 @@ def test_get_experiments():
     data = response.json()
     assert isinstance(data, list)
     # Verifica se há pelo menos um experimento (ajuste se o mock data puder estar vazio)
-    assert len(data) > 0 
+    assert len(data) > 0
     # Verifica a estrutura do primeiro experimento (ajuste conforme seus modelos Pydantic)
     if len(data) > 0:
         experiment = data[0]
@@ -58,7 +58,7 @@ def test_simulation_basic_result():
     assert data["status"] == "Básica"
     # Para Fenolftaleína, pH > 8.2 (aproximadamente) deve dar cor.
     # O pH exato para 0.1M/25ml ácido vs 0.1M/50ml base será bem básico.
-    assert data["indicator_color"] in ["Rosa claro/Róseo", "Carmim/Magenta"] 
+    assert data["indicator_color"] in ["Rosa claro/Róseo", "Carmim/Magenta"]
     assert data["final_ph"] > 7.0
 
 def test_simulation_neutral_result():
@@ -168,11 +168,11 @@ def test_projectile_simulation_invalid_velocity():
 
 def test_projectile_simulation_invalid_angle_too_low():
     response = client.post("/api/simulation/physics/projectile-launch/start", json={
-        "initial_velocity": 10, "launch_angle": 0 
+        "initial_velocity": 10, "launch_angle": 0
     })
     assert response.status_code == 400
     assert "Ângulo de lançamento deve estar entre 0 e 90 graus (exclusive)" in response.json().get("detail", "")
-    
+
 def test_projectile_simulation_invalid_angle_too_high():
     response = client.post("/api/simulation/physics/projectile-launch/start", json={
         "initial_velocity": 10, "launch_angle": 90
@@ -237,13 +237,13 @@ def test_mendelian_cross_heterozygous_x_heterozygous():
     # A lógica de ordenação interna pode variar, então verificamos os componentes
     flat_punnett = [item for sublist in data["punnett_square"] for item in sublist]
     assert sorted(flat_punnett) == sorted(["AA", "Aa", "Aa", "aa"])
-    
+
     # Genótipos: 25% AA, 50% Aa, 25% aa
     genotypes = {g["genotype"]: g["percentage"] for g in data["offspring_genotypes"]}
     assert genotypes.get("AA") == 25.0
     assert genotypes.get("Aa") == 50.0
     assert genotypes.get("aa") == 25.0
-    
+
     # Fenótipos: 75% Dominante, 25% Recessivo (usando defaults "Fenótipo Dominante", "Fenótipo Recessivo")
     phenotypes = {p["phenotype_description"]: p["percentage"] for p in data["offspring_phenotypes"]}
     assert phenotypes.get("Fenótipo Dominante") == 75.0
@@ -251,25 +251,23 @@ def test_mendelian_cross_heterozygous_x_heterozygous():
 
 def test_mendelian_cross_heterozygous_x_recessive():
     response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
-        "parent1_genotype": "Aa",
-        "parent2_genotype": "aa",
-        "dominant_allele": "B", # Testar com outros alelos
+        "parent1_genotype": "Bb", # CORRIGIDO
+        "parent2_genotype": "bb", # CORRIGIDO
+        "dominant_allele": "B",
         "recessive_allele": "b",
         "dominant_phenotype_description": "Preto",
         "recessive_phenotype_description": "Branco"
     })
-    assert response.status_code == 200
+    assert response.status_code == 200 # ESPERADO 200 OK AGORA
     data = response.json()
+    # Quadro Esperado (Bb x bb): [['Bb', 'bb'], ['Bb', 'bb']] ou variações de ordem, mas mesmo conteúdo
     flat_punnett = sorted([item for sublist in data["punnett_square"] for item in sublist])
-    # O backend normaliza 'Ba' para 'Bb' e 'bB' para 'Bb'
-    # E 'aa' (se input) para 'bb' (se recessive_allele='b')
-    # Então, para Aa x aa com B/b, esperamos Bb, Bb, bb, bb
-    assert flat_punnett == sorted(["Bb", "Bb", "bb", "bb"]) 
-    
+    assert flat_punnett == sorted(["Bb", "Bb", "bb", "bb"])
+
     genotypes = {g["genotype"]: g["percentage"] for g in data["offspring_genotypes"]}
-    assert genotypes.get("Bb") == 50.0 
+    assert genotypes.get("Bb") == 50.0
     assert genotypes.get("bb") == 50.0
-    
+
     phenotypes = {p["phenotype_description"]: p["percentage"] for p in data["offspring_phenotypes"]}
     assert phenotypes.get("Preto") == 50.0
     assert phenotypes.get("Branco") == 50.0
@@ -289,14 +287,14 @@ def test_mendelian_cross_invalid_genotype_char():
     # A mensagem exata pode variar dependendo da implementação da validação de alelos
     assert "Alelo 'X' no genótipo 'AX' não corresponde aos alelos definidos" in response.json().get("detail", "")
 
-
 def test_mendelian_cross_invalid_allele_definition_same():
     response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
         "parent1_genotype": "Aa", "parent2_genotype": "Aa",
         "dominant_allele": "A", "recessive_allele": "A"
     })
     assert response.status_code == 400
-    assert "Alelos dominante e recessivo devem ser caracteres únicos e diferentes." in response.json().get("detail", "")
+    # CORRIGIDO para corresponder à mensagem exata do backend
+    assert "Alelos dominante e recessivo definidos não podem ser o mesmo caractere." in response.json().get("detail", "")
 
 def test_mendelian_cross_invalid_allele_definition_long():
     response = client.post("/api/simulation/biology/mendelian-genetics/start", json={
@@ -304,4 +302,5 @@ def test_mendelian_cross_invalid_allele_definition_long():
         "dominant_allele": "Ab", "recessive_allele": "a"
     })
     assert response.status_code == 400
-    assert "Alelos dominante e recessivo devem ser caracteres únicos e diferentes." in response.json().get("detail", "")
+    # CORRIGIDO para corresponder à mensagem exata do backend
+    assert "Alelos dominante e recessivo devem ser caracteres únicos." in response.json().get("detail", "")

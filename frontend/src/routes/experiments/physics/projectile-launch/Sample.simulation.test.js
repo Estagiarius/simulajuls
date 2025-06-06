@@ -1,85 +1,124 @@
-// ARQUIVO DE TESTE PLACEHOLDER PARA frontend/src/routes/experiments/physics/projectile-launch/+page.svelte
-// Testes idealmente com Vitest ou Playwright/Testing Library.
+// ARQUIVO DE TESTE PLACEHOLDER para frontend/src/routes/experiments/physics/projectile-launch/+page.svelte
+// Testes idealmente com Vitest ou Playwright e @testing-library/svelte.
 
-// import { render, screen, fireEvent } from '@testing-library/svelte';
-// import SimulationPage from './+page.svelte';
+// --- Mock de setup para Vitest (exemplo) ---
+// import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+// import { render, screen, fireEvent, waitFor } from '@testing-library/svelte';
+// import Page from './+page.svelte';
 
-describe('Testes para a Tela de Simulação de Lançamento Oblíquo', () => {
+// beforeEach(() => {
+//   vi.resetAllMocks();
+//   global.fetch = vi.fn();
+// });
+// --- Fim do Mock de setup ---
 
-  test('Deve renderizar o título do experimento e o formulário de configuração', () => {
-    // render(SimulationPage);
+describe('Testes Detalhados para a Tela de Simulação de Lançamento Oblíquo', () => {
+
+  const mockProjectileResult = {
+    initial_velocity_x: 14.14,
+    initial_velocity_y: 14.14,
+    total_time: 2.88,
+    max_range: 40.77,
+    max_height: 10.19,
+    trajectory: [
+      { time: 0, x: 0, y: 0 },
+      { time: 1.44, x: 20.38, y: 10.19 },
+      { time: 2.88, x: 40.77, y: 0 }
+    ],
+    parameters_used: { initial_velocity: 20, launch_angle: 45, initial_height: 0, gravity: 9.81 }
+  };
+
+  test('1. Deve renderizar o título e o formulário de configuração corretamente', () => {
+    console.log('PLACEHOLDER: Teste 1. Renderizar título e formulário (Lançamento Oblíquo)');
+    // render(Page);
     // expect(screen.getByRole('heading', { name: /Lançamento Oblíquo/i })).toBeInTheDocument();
     // expect(screen.getByLabelText(/Velocidade Inicial/i)).toBeInTheDocument();
+    // expect(screen.getByLabelText(/Ângulo de Lançamento/i)).toBeInTheDocument();
+    // expect(screen.getByLabelText(/Altura Inicial/i)).toBeInTheDocument(); // Opcional
+    // expect(screen.getByLabelText(/Aceleração da Gravidade/i)).toBeInTheDocument(); // Opcional
     // expect(screen.getByRole('button', { name: /Simular Lançamento/i })).toBeInTheDocument();
-    console.log('PLACEHOLDER: Teste para renderizar título e formulário (Lançamento Oblíquo)');
   });
 
-  test('Deve permitir a alteração dos valores nos campos do formulário', async () => {
-    // render(SimulationPage);
+  test('2. Deve permitir ao usuário alterar os valores dos inputs do formulário', async () => {
+    console.log('PLACEHOLDER: Teste 2. Alterar valores no formulário (Lançamento Oblíquo)');
+    // render(Page);
     // const velocityInput = screen.getByLabelText(/Velocidade Inicial/i);
-    // await fireEvent.input(velocityInput, { target: { value: '25' } });
-    // expect(velocityInput.value).toBe('25');
+    // await fireEvent.input(velocityInput, { target: { value: '30' } });
+    // expect(velocityInput.value).toBe('30');
     //
     // const angleInput = screen.getByLabelText(/Ângulo de Lançamento/i);
     // await fireEvent.input(angleInput, { target: { value: '60' } });
     // expect(angleInput.value).toBe('60');
-    console.log('PLACEHOLDER: Teste para alterar valores do formulário (Lançamento Oblíquo)');
   });
 
-  test('Deve exibir "Calculando Trajetória..." ao clicar no botão', async () => {
-    // render(SimulationPage);
-    // global.fetch = vi.fn(() => new Promise(resolve => setTimeout(() => resolve({ ok: true, json: () => Promise.resolve({ max_range: 1 }) }), 100)));
+  test('3. Deve exibir "Calculando Trajetória..." ao clicar no botão e desabilitar o botão', async () => {
+    console.log('PLACEHOLDER: Teste 3. Estado de carregamento "Calculando Trajetória..." (Lançamento Oblíquo)');
+    // global.fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockProjectileResult) });
+    // render(Page);
     // const startButton = screen.getByRole('button', { name: /Simular Lançamento/i });
-    // fireEvent.click(startButton);
-    // expect(await screen.findByText(/Calculando Trajetória.../i)).toBeInTheDocument();
-    // await screen.findByText(/Resultados do Lançamento/i); // Espera o resultado
-    console.log('PLACEHOLDER: Teste para estado de carregamento (Lançamento Oblíquo)');
+    // await fireEvent.click(startButton);
+    // expect(startButton).toBeDisabled();
+    // expect(screen.getByText(/Calculando Trajetória.../i)).toBeInTheDocument();
+    // await waitFor(() => expect(screen.queryByText(/Calculando Trajetória.../i)).not.toBeInTheDocument());
+    // expect(startButton).not.toBeDisabled();
   });
 
-  test('Deve chamar a API com os parâmetros corretos (Lançamento Oblíquo)', async () => {
-    // render(SimulationPage);
-    // const mockFetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ max_range: 1 }) }));
-    // global.fetch = mockFetch;
+  test('4. Deve chamar a API com os parâmetros corretos (Lançamento Oblíquo)', async () => {
+    console.log('PLACEHOLDER: Teste 4. Chamada da API com parâmetros corretos (Lançamento Oblíquo)');
+    // global.fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockProjectileResult) });
+    // render(Page);
     //
-    // await fireEvent.input(screen.getByLabelText(/Velocidade Inicial/i), { target: { value: '30' } });
+    // await fireEvent.input(screen.getByLabelText(/Velocidade Inicial/i), { target: { value: '25' } });
     // await fireEvent.input(screen.getByLabelText(/Ângulo de Lançamento/i), { target: { value: '30' } });
-    // await fireEvent.input(screen.getByLabelText(/Altura Inicial/i), { target: { value: '5' } });
+    // await fireEvent.input(screen.getByLabelText(/Altura Inicial/i), { target: { value: '10' } });
+    // await fireEvent.input(screen.getByLabelText(/Aceleração da Gravidade/i), { target: { value: '10' } });
+    //
     // await fireEvent.click(screen.getByRole('button', { name: /Simular Lançamento/i }));
     //
-    // expect(mockFetch).toHaveBeenCalledTimes(1);
-    // const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
-    // expect(requestBody.initial_velocity).toBe(30);
-    // expect(requestBody.launch_angle).toBe(30);
-    // expect(requestBody.initial_height).toBe(5);
-    console.log('PLACEHOLDER: Teste para chamada da API com parâmetros corretos (Lançamento Oblíquo)');
+    // expect(global.fetch).toHaveBeenCalledTimes(1);
+    // expect(global.fetch).toHaveBeenCalledWith(
+    //   'http://localhost:8000/api/simulation/physics/projectile-launch/start',
+    //   expect.objectContaining({
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       initial_velocity: 25,
+    //       launch_angle: 30,
+    //       initial_height: 10,
+    //       gravity: 10
+    //     })
+    //   })
+    // );
   });
 
-  test('Deve exibir os resultados numéricos e o gráfico SVG após simulação bem-sucedida', async () => {
-    // render(SimulationPage);
-    // const mockResult = {
-    //   max_range: 100, max_height: 50, total_time: 10,
-    //   initial_velocity_x: 10, initial_velocity_y: 20,
-    //   trajectory: [{time:0,x:0,y:0}, {time:1,x:10,y:15}],
-    //   parameters_used: { initial_velocity: 22.36, launch_angle: 63.43, initial_height: 0, gravity: 9.81 }
-    // };
-    // global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(mockResult) }));
-    //
+  test('5. Deve exibir os resultados numéricos e o gráfico SVG corretamente após simulação', async () => {
+    console.log('PLACEHOLDER: Teste 5. Exibir resultados numéricos e SVG (Lançamento Oblíquo)');
+    // global.fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockProjectileResult) });
+    // render(Page);
     // await fireEvent.click(screen.getByRole('button', { name: /Simular Lançamento/i }));
     //
-    // expect(await screen.findByText(/Alcance Máximo: 100.00 m/i)).toBeInTheDocument();
-    // expect(screen.getByText(/Altura Máxima: 50.00 m/i)).toBeInTheDocument();
-    // expect(screen.getByRole('img', { name: /Gráfico da trajetória do projétil/i })).toBeInTheDocument(); // Verifica SVG
-    console.log('PLACEHOLDER: Teste para exibir resultados e SVG (Lançamento Oblíquo)');
+    // await waitFor(() => {
+    //   expect(screen.getByText(/Alcance Máximo: 40.77 m/i)).toBeInTheDocument();
+    //   expect(screen.getByText(/Altura Máxima: 10.19 m/i)).toBeInTheDocument();
+    //   expect(screen.getByText(/Tempo Total de Voo: 2.88 s/i)).toBeInTheDocument();
+    //   // Verificar a presença do SVG (pode ser pelo 'role' ou um 'data-testid')
+    //   const svgElement = screen.getByRole('img', { name: /Gráfico da trajetória do projétil/i });
+    //   expect(svgElement).toBeInTheDocument();
+    //   // Verificar se a polyline tem pontos (exemplo simples)
+    //   const polyline = svgElement.querySelector('polyline');
+    //   expect(polyline.getAttribute('points')).not.toBe('');
+    // });
   });
 
-  test('Deve exibir mensagem de erro se a chamada à API de Lançamento Oblíquo falhar', async () => {
-    // render(SimulationPage);
-    // global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 400, json: () => Promise.resolve({ detail: "Ângulo inválido" }) }));
-    //
+  test('6. Deve exibir mensagem de erro se a chamada à API de Lançamento Oblíquo falhar', async () => {
+    console.log('PLACEHOLDER: Teste 6. Exibir mensagem de erro da API (Lançamento Oblíquo)');
+    // global.fetch.mockRejectedValueOnce(new Error("Erro de conexão física"));
+    // render(Page);
     // await fireEvent.click(screen.getByRole('button', { name: /Simular Lançamento/i }));
     //
-    // expect(await screen.findByText(/Erro: Ângulo inválido/i)).toBeInTheDocument();
-    console.log('PLACEHOLDER: Teste para exibir mensagem de erro da API (Lançamento Oblíquo)');
+    // await waitFor(() => {
+    //   expect(screen.getByText(/Erro: Erro de conexão física/i)).toBeInTheDocument();
+    // });
   });
 
 });

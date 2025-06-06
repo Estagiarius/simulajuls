@@ -1,66 +1,112 @@
-# simulajuls
-1. Especificação de Requisitos de Software (SRS) 
+# Simulador de Experimentos Educativos
 
-Especificação de Requisitos de Software 
+Bem-vindo ao Simulador de Experimentos Educativos! Este projeto visa fornecer uma plataforma interativa para simular experimentos de Química, Física e Biologia, auxiliando no processo de ensino-aprendizagem.
 
-Versão 1.0 
+## Visão Geral
 
-Introdução 
+O simulador permite aos usuários selecionar um experimento pré-definido, configurar seus parâmetros e observar os resultados da simulação tanto numericamente quanto (em alguns casos) visualmente.
 
-Este documento especifica os requisitos para o "Simulador de Experimentos Educativos", um software destinado a auxiliar professores e alunos nas áreas de química, física e biologia. 
+## Tecnologias Utilizadas
 
-1. Requisitos Funcionais 
+*   **Backend:** Python com [FastAPI](https://fastapi.tiangolo.com/)
+*   **Frontend:** JavaScript com [Svelte](https://svelte.dev/) (usando SvelteKit)
+*   **Linguagem de Simulação:** Python (no backend)
+*   **Testes de Backend:** Pytest
 
-1.1 O sistema deve permitir a seleção de experimentos pré-definidos em química, física e biologia. 
+## Simulações Disponíveis
 
-1.2 Deve ser possível configurar parâmetros específicos para cada simulação. 
+Atualmente, as seguintes simulações estão implementadas:
 
-1.3 O software deve apresentar os resultados da simulação em formatos gráficos e numéricos. 
+1.  **Química: Reação Ácido-Base**
+    *   Configure as concentrações e volumes de um ácido e uma base (fortes e monopróticos/monohidroxílicos) e veja o pH resultante.
+    *   Observe a mudança de cor com indicadores como Fenolftaleína ou Azul de Bromotimol.
+    *   Acesse em: `http://localhost:5173/experiments/chemistry/acid-base` (após iniciar os servidores)
 
-1.4 Usuários devem poder salvar e carregar simulações anteriores. 
+2.  **Física: Lançamento Oblíquo**
+    *   Defina a velocidade inicial, ângulo de lançamento, altura inicial (opcional) e gravidade (opcional) de um projétil.
+    *   Visualize a trajetória, alcance máximo, altura máxima e tempo total de voo.
+    *   Acesse em: `http://localhost:5173/experiments/physics/projectile-launch`
 
-1.5 O sistema deve permitir a exportação de dados para formatos CSV e PDF. 
+3.  **Biologia: Genética Mendeliana (Cruzamento Monoíbrido)**
+    *   Realize um cruzamento genético simples informando os genótipos dos pais para um gene com dois alelos.
+    *   Observe o Quadro de Punnett resultante e as proporções genotípicas e fenotípicas da prole.
+    *   Acesse em: `http://localhost:5173/experiments/biology/mendelian-genetics`
 
-2. Requisitos Não Funcionais 
+## Como Executar o Projeto Localmente
 
-2.1 Usabilidade: O software deve ser fácil de navegar, com uma interface limpa e instruções claras. 
+Você precisará ter Python (3.7+) e Node.js (com npm, pnpm ou yarn) instalados.
 
-2.2 Desempenho: Simulações devem ser processadas em menos de 2 segundos para cenários de baixa complexidade. 
+**1. Backend (FastAPI):**
 
-2.3 Confiabilidade: O sistema deve garantir uma taxa de falhas inferior a 1% durante simulações. 
+   a. Abra um terminal na raiz do projeto.
 
-2.4 Segurança: Dados de simulações salvas devem ser protegidos por criptografia. 
+   b. (Recomendado) Crie e ative um ambiente virtual Python na pasta `backend/`:
+      ```bash
+      python3 -m venv backend/venv
+      source backend/venv/bin/activate  # Linux/macOS
+      # backend\venv\Scripts\activate    # Windows
+      ```
 
-3. Restrições e Suposições 
+   c. Instale as dependências Python (FastAPI, Uvicorn):
+      ```bash
+      # Se um requirements.txt existisse em backend/, você usaria:
+      # pip install -r backend/requirements.txt
+      # Por enquanto, instale manualmente se não estiverem globais:
+      pip install fastapi uvicorn pydantic
+      ```
+      *Nota: Durante o desenvolvimento com o agente AI, as dependências foram instaladas globalmente como workaround para limitações do ambiente do agente. Em um setup local padrão, o uso de ambiente virtual e `requirements.txt` é preferível.*
 
-3.1 Restrições: O software será compatível apenas com sistemas operacionais Windows e MacOS. 
+   d. Inicie o servidor FastAPI:
+      ```bash
+      python -m uvicorn backend.main:app --reload --port 8000
+      ```
+      O backend estará rodando em `http://localhost:8000`.
 
-3.2 Suposições: Assume-se que os usuários têm acesso a uma conexão de internet estável para utilizar recursos online. 
+**2. Frontend (SvelteKit):**
 
-2. Documento de Design de Interface do Usuário (UI Design Document) 
+   a. Abra um segundo terminal.
 
-Documento de Design de Interface do Usuário 
+   b. Navegue até a pasta `frontend/`:
+      ```bash
+      cd frontend
+      ```
 
-Versão 1.0 
+   c. Instale as dependências do Node.js:
+      ```bash
+      npm install
+      # ou pnpm install / yarn install
+      ```
+      *Nota: Esta etapa pode falhar no ambiente do agente AI devido a restrições. Em um setup local, ela é necessária.*
 
-Introdução 
+   d. Inicie o servidor de desenvolvimento SvelteKit:
+      ```bash
+      npm run dev
+      ```
+      O frontend estará geralmente acessível em `http://localhost:5173`.
 
-Este documento descreve o design da interface do usuário para o "Simulador de Experimentos Educativos". 
+**3. Acessando o Simulador:**
 
-Layout e Design 
+   Após iniciar ambos os servidores, abra seu navegador e acesse `http://localhost:5173`. Você deverá ver a tela de seleção de experimentos.
 
-O aplicativo terá três telas principais: 
+## Testes
 
-     
+*   **Backend:** Os testes de unidade para o backend são escritos com Pytest. Para executá-los (com o ambiente virtual ativado e `pytest` instalado via `pip install pytest`):
+    ```bash
+    python -m pytest backend/tests/test_main.py
+    ```
 
-    Tela de Seleção de Experimentos: Lista categorizada de experimentos com breves descrições e imagens ilustrativas. 
-     
+*   **Frontend:** Arquivos de placeholder para testes de frontend (`*.test.js`) foram criados dentro das pastas de cada componente/rota. Eles contêm exemplos de como os testes poderiam ser escritos usando Vitest e Svelte Testing Library. A execução real desses testes requer a configuração de um ambiente de teste JavaScript.
 
-    Tela de Configuração e Simulação: Área central para a simulação com painéis laterais para configuração de parâmetros. 
-     
+## Próximos Passos (Sugestões)
 
-    Tela de Resultados: Visualização gráfica e numérica dos resultados, com opções de exportação. 
-     
+*   Implementar a persistência de simulações salvas (Requisito Funcional 1.4).
+*   Expandir com mais experimentos em cada área.
+*   Melhorar as visualizações gráficas.
+*   Adicionar autenticação de usuário, se necessário.
+*   Configurar um ambiente de teste completo para o frontend.
+
+
+```
 
 Elementos de Design 
 
@@ -224,4 +270,4 @@ Planos de Mitigação e Contingência
      
 
     Problemas de Usabilidade: Realizar testes de usabilidade com usuários-alvo e iterar o design conforme necessário. 
-     
+    

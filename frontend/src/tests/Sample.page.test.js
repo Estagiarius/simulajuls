@@ -38,7 +38,7 @@ describe('Testes para a Tela de Seleção de Experimentos (+page.svelte)', () =>
   test('Deve exibir cartões de experimento dentro de cada categoria', async () => {
     // (Similar ao teste acima, mockando fetch e verificando a presença dos nomes dos experimentos)
     // render(Page);
-    // await screen.findByText('Teste Quim'); 
+    // await screen.findByText('Teste Quim');
     // expect(screen.getByText('Teste Quim')).toBeInTheDocument();
     // expect(screen.getByText('Desc Quim')).toBeInTheDocument();
     // expect(screen.getByRole('button', { name: /Iniciar Simulação/i })).toBeInTheDocument(); // Verifica um botão

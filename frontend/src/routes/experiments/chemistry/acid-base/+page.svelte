@@ -28,7 +28,7 @@
     isLoading = true;
     error = null;
     simulationResult = null;
-    
+
     // Ajustar o indicator_name para null se "Nenhum" for selecionado
     const payload = {
       ...params,
@@ -87,7 +87,7 @@
     };
     return colorMap[colorName.toLowerCase()] || 'grey'; // Retorna cinza se a cor não for mapeada
   }
-  
+
   function calculatePhIndicatorPosition(ph) {
     // Converte pH (0-14) para uma porcentagem (0-100) para posicionamento na barra.
     // Garante que o valor esteja entre 0 e 14 antes de calcular.
@@ -103,7 +103,7 @@
 
 <main class="container">
   <a href="/" class="back-link" use:fade>← Voltar para Seleção de Experimentos</a>
-  
+
   <h1>{experimentDetails.name}</h1>
   <p class="description">{experimentDetails.description}</p>
 
@@ -115,7 +115,7 @@
         <legend>Ácido</legend>
         <label for="acid_concentration">Concentração do Ácido (mol/L):</label>
         <input type="number" id="acid_concentration" bind:value={params.acid_concentration} min="0.001" step="0.001" required>
-        
+
         <label for="acid_volume">Volume do Ácido (mL):</label>
         <input type="number" id="acid_volume" bind:value={params.acid_volume} min="1" step="1" required>
       </fieldset>
@@ -124,7 +124,7 @@
         <legend>Base</legend>
         <label for="base_concentration">Concentração da Base (mol/L):</label>
         <input type="number" id="base_concentration" bind:value={params.base_concentration} min="0.001" step="0.001" required>
-        
+
         <label for="base_volume">Volume da Base (mL):</label>
         <input type="number" id="base_volume" bind:value={params.base_volume} min="1" step="1" required>
       </fieldset>
@@ -139,7 +139,7 @@
         {/each}
       </select>
     </fieldset>
-    
+
     <button type="submit" class="submit-button" disabled={isLoading}>
       {#if isLoading}
         Simulando...
@@ -162,7 +162,7 @@
         <div class="result-item">
           <strong>Status:</strong> {simulationResult.status}
         </div>
-        
+
         {#if simulationResult.indicator_name || (simulationResult.indicator_color && simulationResult.indicator_color !== 'Indicador não reconhecido' && simulationResult.indicator_color !== 'Nenhum')}
           <div class="result-item">
             <strong>Indicador ({simulationResult.indicator_name || params.indicator_name || 'Não especificado'}):</strong>
@@ -182,13 +182,13 @@
         <div class="result-item">
           <strong>Mols OH- Iniciais:</strong> {simulationResult.mols_oh_minus_initial.toExponential(3)}
         </div>
-        
+
         {#if simulationResult.excess_reactant && simulationResult.excess_reactant !== "Nenhum"}
           <div class="result-item">
             <strong>Reagente em Excesso:</strong> {simulationResult.excess_reactant}
           </div>
         {/if}
-        
+
         {#if simulationResult.message}
           <div class="result-item result-message">
             <strong>Mensagem:</strong> {simulationResult.message}
@@ -307,7 +307,7 @@
     outline: none;
     box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
   }
-  
+
   .indicator-fieldset {
     margin-bottom: 25px;
   }
@@ -438,7 +438,7 @@
     font-size: 0.8em;
     color: #555;
   }
-  
+
   .error-message {
     color: #FFA500; /* Laranja para alertas */
     background-color: #fff3e0;
