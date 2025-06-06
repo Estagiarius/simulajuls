@@ -105,4 +105,169 @@ Você precisará ter Python (3.7+) e Node.js (com npm, pnpm ou yarn) instalados.
 *   Adicionar autenticação de usuário, se necessário.
 *   Configurar um ambiente de teste completo para o frontend.
 
+
 ```
+
+Elementos de Design 
+
+     
+
+    Paleta de Cores: Azul claro (#ADD8E6) para elementos interativos, verde claro (#90EE90) para feedback positivo e laranja (#FFA500) para alertas. 
+     
+
+    Tipografia: Fonte sans-serif 'Roboto' para leitura fácil e confortável. 
+     
+
+Experiência do Usuário (UX) 
+
+     
+
+    Simplicidade: Minimizar o número de cliques para iniciar uma simulação. 
+     
+
+    Feedback Visual: Mostrar mudanças imediatas quando os parâmetros são ajustados. 
+     
+
+    Foco: Limitar distrações, com um design limpo e organizado. 
+     
+
+3. Plano de Testes 
+
+Plano de Testes 
+
+Versão 1.0 
+
+Estratégia de Testes 
+
+Serão realizados testes de unidade, integração, sistema e aceitação. Utilizaremos frameworks como JUnit para testes de unidade e Selenium para testes de interface do usuário. 
+
+Casos de Teste 
+
+     
+
+    Teste de Unidade: Testar funções matemáticas e algoritmos de simulação. 
+     
+
+    Teste de Integração: Verificar a comunicação entre os módulos de simulação e interface. 
+     
+
+    Teste de Sistema: Executar simulações completas para validar funcionalidades e desempenho. 
+     
+
+    Teste de Aceitação: Realizar sessões com professores para assegurar que o software atende às suas necessidades. 
+     
+
+Testes de Usabilidade 
+
+     Serão conduzidas sessões de teste com professores e alunos para coletar feedback sobre a interface.
+     
+
+4. Plano de Implementação 
+
+Plano de Implementação 
+
+Versão 1.0 
+
+Cronograma 
+
+     Sprint 1 (1 mês): Design da arquitetura, desenvolvimento da tela de seleção de experimentos.
+     Sprint 2 (1 mês): Implementação do módulo de simulação de química.
+     Sprint 3 (1 mês): Desenvolvimento dos módulos de física e biologia.
+     Sprint 4 (2 semanas): Testes de integração e correção de bugs.
+     Sprint 5 (1 semana): Preparação para o lançamento.
+     
+
+Tecnologias e Ferramentas 
+
+
+     Controle de Versão: Git com GitHub.
+     
+
+
+         
+     
+
+Autenticação 
+
+     Utiliza token de autenticação JWT.
+     
+
+6. Manual do Usuário 
+
+Manual do Usuário 
+
+Versão 1.0 
+
+Introdução 
+
+Bem-vindo ao "Simulador de Experimentos Educativos". Este manual ajudará você a utilizar todas as funcionalidades do software. 
+
+Configuração Inicial 
+
+     Baixe e instale o software a partir do site oficial.
+     Abra o aplicativo e faça login com suas credenciais.
+     
+
+Guias de Uso 
+
+     Iniciar Simulação: Selecione um experimento, configure os parâmetros e clique em "Iniciar".
+     Salvar Simulação: Após a execução, clique em "Salvar" para armazenar os resultados.
+     Exportar Dados: Na tela de resultados, selecione "Exportar" e escolha o formato desejado.
+     
+
+Resolução de Problemas 
+
+     Simulação não inicia: Verifique a conexão com a internet e tente novamente.
+     Erro ao exportar dados: Assegure-se de que o software tem permissão para escrever no diretório escolhido.
+     
+
+7. Plano de Gerenciamento de Configuração 
+
+Plano de Gerenciamento de Configuração 
+
+Versão 1.0 
+
+Controle de Versão 
+
+     Sistema: Git
+     Convenções: Branch principal 'main', branches de funcionalidades nomeadas como 'feature/nome-da-funcionalidade'.
+     
+
+Integração Contínua 
+
+     Ferramenta: GitHub Actions
+     Processo: Executa testes de unidade e integração em cada push para 'main'.
+     
+
+Gestão de Mudanças 
+
+     Processo: Cada mudança deve ser documentada em um 'pull request' com revisão por pares.
+     
+
+8. Relatório de Avaliação de Riscos 
+
+Relatório de Avaliação de Riscos 
+
+Versão 1.0 
+
+Identificação de Riscos 
+
+     Atraso no Desenvolvimento: Dependência de bibliotecas de terceiros.
+     Problemas de Usabilidade: Interface complexa para usuários com TDAH.
+     
+
+Análise de Impacto e Probabilidade 
+
+     Atraso no Desenvolvimento: Impacto alto, probabilidade média.
+     Problemas de Usabilidade: Impacto médio, probabilidade alta.
+     
+
+Planos de Mitigação e Contingência 
+
+     
+
+    Atraso no Desenvolvimento: Avaliar e testar bibliotecas antes da integração, ter um plano de desenvolvimento alternativo. 
+     
+
+    Problemas de Usabilidade: Realizar testes de usabilidade com usuários-alvo e iterar o design conforme necessário. 
+    
