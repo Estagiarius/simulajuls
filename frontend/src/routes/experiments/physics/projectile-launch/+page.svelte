@@ -21,7 +21,7 @@
     isLoading = true;
     error = null;
     simulationResult = null;
-    
+
     // Garantir que os tipos de dados estão corretos antes de enviar
     const payload = {
       initial_velocity: parseFloat(params.initial_velocity),
@@ -57,27 +57,72 @@
     }
   }
 
-  // NOVAS FUNÇÕES AUXILIARES PARA O SVG E TABELA:
+  // Calcula o atributo viewBox para o SVG, para enquadrar corretamente a trajetória.
+  // O viewBox define a "janela" de visualização das coordenadas internas do SVG.
+  // Formato: "minX minY width height"
   function getSvgViewBox(trajectory, maxRange, maxHeight, initialHeight) {
     if (!trajectory || trajectory.length === 0) {
-      return "0 0 100 100"; // Default viewBox
+      return "0 0 100 100"; // ViewBox padrão se não houver trajetória
     }
-    const padding = 20; 
-    const viewWidth = maxRange > 0 ? maxRange + 2*padding : 100 + 2*padding; 
-    const viewHeight = Math.max(maxHeight, initialHeight) > 0 ? Math.max(maxHeight, initialHeight) + 2*padding : 100 + 2*padding;
-    return `${-padding} ${-padding} ${viewWidth} ${viewHeight}`;
+    const padding = 20; // Espaçamento visual ao redor da trajetória dentro do SVG
+
+    // Largura visual: alcance máximo + padding em ambos os lados.
+    // Se maxRange for 0, usa um valor padrão para evitar largura 0.
+    const viewWidth = (maxRange > 0 ? maxRange : 100) + 2 * padding;
+    // Altura visual: altura máxima (considerando altura inicial se for maior que o pico da trajetória)
+    // + padding em cima e embaixo.
+    const effectiveMaxPhysicalY = Math.max(maxHeight, initialHeight);
+    const viewHeight = (effectiveMaxPhysicalY > 0 ? effectiveMaxPhysicalY : 100) + 2 * padding;
+
+    // minX do viewBox: começa um 'padding' à esquerda da origem física (x=0).
+    const minX = -padding;
+    // minY do viewBox: No SVG, o eixo Y cresce para baixo.
+    // Esta implementação de viewBox, junto com svgAdjustedY, faz com que:
+    // - O ponto (0,0) físico (origem do lançamento) seja mapeado para (0, altura_máxima_efetiva + padding) no sistema de coordenadas do SVG.
+    // - O eixo Y físico positivo (para cima) corresponda ao eixo Y SVG negativo (para cima).
+    // min-y define o valor Y no topo do viewBox. Para que o ponto mais alto da trajetória (maxHeight)
+    // fique visível com padding, e o "chão" (y=0 físico) também tenha padding abaixo dele,
+    // e considerando que svgAdjustedY inverte as coordenadas Y,
+    // o minY do viewBox é -padding.
+    const minY = -padding;
+
+    return `${minX} ${minY} ${viewWidth} ${viewHeight}`;
   }
 
+  // Ajusta a coordenada X física para o sistema de coordenadas do SVG.
+  // Nesta implementação, o minX do viewBox é -padding.
+  // As coordenadas X da trajetória são usadas diretamente como coordenadas X no SVG,
+  // assumindo que a origem (x=0) da física corresponde a x=0 no sistema de coordenadas do viewBox.
+  // O padding lateral é gerenciado pelo tamanho e minX do viewBox.
   function svgAdjustedX(physicalX, trajectory) {
-    return physicalX; 
+    return physicalX;
   }
 
+  // Ajusta e INVERTE a coordenada Y física para o sistema de coordenadas do SVG.
+  // physicalY: coordenada no sistema físico (y=0 é o solo, cresce para cima).
+  // overallMaxHeight: altura máxima atingida pela trajetória, medida a partir do solo (y=0 físico).
+  // physicalInitialHeight: altura inicial do lançamento (y0 físico).
+  // O SVG tem y=0 no topo da sua área de desenho e o eixo Y cresce para baixo.
+  // Esta função mapeia o Y físico para que o gráfico pareça correto (Y crescendo para cima) dentro do viewBox SVG.
   function svgAdjustedY(physicalY, trajectory, overallMaxHeight, physicalInitialHeight) {
-    const padding = 20; 
-    // const viewHeight = Math.max(overallMaxHeight, physicalInitialHeight) + 2 * padding; // Not directly used here but part of viewBox logic
-    return (Math.max(overallMaxHeight, physicalInitialHeight) + padding) - physicalY; // Using the version from Turn 40 prompt
+    const padding = 20;
+    // Determina a maior altura física relevante (pico da trajetória ou altura inicial).
+    const effectiveMaxPhysicalY = Math.max(overallMaxHeight, physicalInitialHeight);
+    // A coordenada Y no SVG é calculada para que:
+    // 1. O eixo Y físico seja invertido (valores Y físicos maiores ficam "mais para cima" no SVG).
+    // 2. Haja um 'padding' no topo do gráfico.
+    // O cálculo (effectiveMaxPhysicalY + padding) - physicalY faz essa inversão e posicionamento.
+    // - (effectiveMaxPhysicalY + padding) define uma linha de referência "acima" do ponto mais alto.
+    // - Subtrair physicalY inverte o eixo:
+    //   - Se physicalY = 0 (solo), Ysvg = effectiveMaxPhysicalY + padding (base do gráfico no SVG).
+    //   - Se physicalY = effectiveMaxPhysicalY (ponto mais alto), Ysvg = padding (topo do gráfico no SVG).
+    // Isso funciona em conjunto com o viewBox que tem minY = -padding.
+    return (effectiveMaxPhysicalY + padding) - physicalY;
   }
 
+  // Formata a lista de pontos da trajetória (objetos {x, y})
+  // em uma string única de coordenadas, conforme esperado pelo atributo `points`
+  // da tag `<polyline>` do SVG (ex: "x1,y1 x2,y2 x3,y3 ...").
   function formatTrajectoryForSvg(trajectory, overallMaxHeight, physicalInitialHeight) {
     if (!trajectory) return "";
     return trajectory
@@ -85,16 +130,21 @@
       .join(" ");
   }
 
+  // Retorna uma amostra dos pontos da trajetória para exibição em tabela.
+  // Se a trajetória tiver muitos pontos, a tabela pode ficar muito longa.
+  // Esta função seleciona aproximadamente 'count' pontos, incluindo o primeiro e o último.
   function getTrajectorySample(trajectory, count = 10) {
-    if (!trajectory || trajectory.length === 0) return [];
-    if (trajectory.length <= count) return trajectory;
-    
+    if (!trajectory || trajectory.length === 0) return []; // Retorna vazio se não houver trajetória
+    if (trajectory.length <= count) return trajectory; // Retorna todos os pontos se forem poucos
+
     const sample = [];
-    const step = Math.floor(trajectory.length / (count -1)); 
+    // Calcula o passo para pegar 'count-1' pontos uniformemente espaçados.
+    // O último ponto é adicionado separadamente para garantir sua inclusão.
+    const step = Math.floor(trajectory.length / (count -1));
     for (let i = 0; i < count -1 ; i++) {
       sample.push(trajectory[i * step]);
     }
-    sample.push(trajectory[trajectory.length - 1]); 
+    sample.push(trajectory[trajectory.length - 1]); // Garante que o último ponto da trajetória seja incluído.
     return sample;
   }
 
@@ -106,7 +156,7 @@
 
 <main class="container">
   <a href="/" class="back-link" use:fade>← Voltar para Seleção de Experimentos</a>
-  
+
   <h1>{experimentDetails.name}</h1>
   <p class="description">{experimentDetails.description}</p>
 
@@ -118,7 +168,7 @@
         <legend>Parâmetros Principais</legend>
         <label for="initial_velocity">Velocidade Inicial (m/s):</label>
         <input type="number" id="initial_velocity" bind:value={params.initial_velocity} min="0.1" step="0.1" required>
-        
+
         <label for="launch_angle">Ângulo de Lançamento (graus):</label>
         <input type="number" id="launch_angle" bind:value={params.launch_angle} min="1" max="89" step="1" required>
         <small>Valores entre 1 e 89 graus para lançamento oblíquo.</small>
@@ -128,12 +178,12 @@
         <legend>Parâmetros Adicionais (Opcionais)</legend>
         <label for="initial_height">Altura Inicial (m):</label>
         <input type="number" id="initial_height" bind:value={params.initial_height} min="0" step="0.1">
-        
+
         <label for="gravity">Aceleração da Gravidade (m/s²):</label>
         <input type="number" id="gravity" bind:value={params.gravity} min="0.1" step="0.01">
       </fieldset>
     </div>
-    
+
     <button type="submit" class="submit-button" disabled={isLoading}>
       {#if isLoading}
         Calculando Trajetória...
@@ -167,20 +217,20 @@
       <h3>Trajetória do Projétil:</h3>
       {#if simulationResult.trajectory && simulationResult.trajectory.length > 0}
         <div class="trajectory-container" role="img" aria-label="Gráfico da trajetória do projétil">
-          <svg 
-            width="100%" 
-            height="300" 
-            viewBox="{getSvgViewBox(simulationResult.trajectory, simulationResult.max_range, simulationResult.max_height, simulationResult.parameters_used.initial_height)}" 
+          <svg
+            width="100%"
+            height="300"
+            viewBox="{getSvgViewBox(simulationResult.trajectory, simulationResult.max_range, simulationResult.max_height, simulationResult.parameters_used.initial_height)}"
             preserveAspectRatio="xMidYMin meet" <!-- Kept xMidYMin meet as implemented -->
             style="border: 1px solid #ccc; background-color: #f0f8ff;"
           >
             <!-- Eixos (simplificado) - Using version from Turn 40 prompt -->
-            <line x1="0" y1="{svgAdjustedY(0, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}" 
-                  x2="{svgAdjustedX(simulationResult.max_range, simulationResult.trajectory)}" 
-                  y2="{svgAdjustedY(0, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}" 
+            <line x1="0" y1="{svgAdjustedY(0, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}"
+                  x2="{svgAdjustedX(simulationResult.max_range, simulationResult.trajectory)}"
+                  y2="{svgAdjustedY(0, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}"
                   stroke="#aaa" stroke-width="1"/>
-            <line x1="{svgAdjustedX(0, simulationResult.trajectory)}" y1="0" 
-                  x2="{svgAdjustedX(0, simulationResult.trajectory)}" 
+            <line x1="{svgAdjustedX(0, simulationResult.trajectory)}" y1="0"
+                  x2="{svgAdjustedX(0, simulationResult.trajectory)}"
                   y2="{svgAdjustedY(simulationResult.max_height, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height) + 20}"  /* +20 para dar espaço */
                   stroke="#aaa" stroke-width="1"/>
 
@@ -192,19 +242,19 @@
               stroke-width="2"
             />
             <!-- Ponto inicial -->
-            <circle cx="{svgAdjustedX(simulationResult.trajectory[0].x, simulationResult.trajectory)}" 
-                    cy="{svgAdjustedY(simulationResult.trajectory[0].y, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}" 
+            <circle cx="{svgAdjustedX(simulationResult.trajectory[0].x, simulationResult.trajectory)}"
+                    cy="{svgAdjustedY(simulationResult.trajectory[0].y, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}"
                     r="3" fill="green" />
             <!-- Ponto final -->
-            <circle cx="{svgAdjustedX(simulationResult.trajectory[simulationResult.trajectory.length - 1].x, simulationResult.trajectory)}" 
-                    cy="{svgAdjustedY(simulationResult.trajectory[simulationResult.trajectory.length - 1].y, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}" 
+            <circle cx="{svgAdjustedX(simulationResult.trajectory[simulationResult.trajectory.length - 1].x, simulationResult.trajectory)}"
+                    cy="{svgAdjustedY(simulationResult.trajectory[simulationResult.trajectory.length - 1].y, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}"
                     r="3" fill="red" />
           </svg>
         </div>
       {:else}
         <p>Dados da trajetória não disponíveis.</p>
       {/if}
-      
+
       <h4>Dados da Trajetória (amostra):</h4>
       <div class="trajectory-table-container">
         <table>
@@ -280,7 +330,7 @@
   }
   .submit-button:hover:not(:disabled) { background-color: #9BC9E0; }
   .submit-button:disabled { background-color: #ccc; cursor: not-allowed; }
-  
+
   .results-section {
     margin-top: 30px; padding: 20px; background-color: #e9f5ff;
     border: 1px solid #ADD8E6; border-radius: 6px;
@@ -288,7 +338,7 @@
   .results-section h2 { margin-top: 0; margin-bottom:15px; color: #2980b9; text-align:center; }
   .results-section h3 { margin-top: 20px; margin-bottom:10px; color: #34495e; }
   .results-section h4 { margin-top: 20px; margin-bottom:5px; color: #34495e; font-size: 1em; font-weight:bold; }
-  
+
   .error-message {
     color: #FFA500; background-color: #fff3e0; border: 1px solid #FFA500;
     padding: 10px; border-radius: 4px; margin-top: 20px;

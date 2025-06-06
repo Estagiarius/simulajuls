@@ -31,7 +31,7 @@
     if (!regex.test(genotype)) {
         // return `Genótipo contém alelos inválidos. Use apenas '${params.dominant_allele}' ou '${params.recessive_allele}'.`;
     } // A validação principal de alelos é no backend.
-    return ""; 
+    return "";
   }
 
   async function startSimulation() {
@@ -48,7 +48,7 @@
     isLoading = true;
     error = null;
     simulationResult = null;
-    
+
     const payload = { ...params };
     // Garante que alelos vazios sejam null ou string vazia se o backend esperar assim,
     // ou use os defaults se o backend não os aceitar como opcionais no sentido de não-presença.
@@ -88,7 +88,7 @@
 
 <main class="container">
   <a href="/" class="back-link" use:fade>← Voltar para Seleção de Experimentos</a>
-  
+
   <h1>{experimentDetails.name}</h1>
   <p class="description">{experimentDetails.description}</p>
 
@@ -136,7 +136,7 @@
         </div>
       </div>
     </fieldset>
-    
+
     <button type="submit" class="submit-button" disabled={isLoading || parent1GenotypeError || parent2GenotypeError}>
       {#if isLoading}
         Calculando Proporções...
@@ -149,7 +149,7 @@
   {#if simulationResult}
     <section class="results-section" transition:fade={{ duration: 300 }}>
       <h2>Resultados do Cruzamento Genético</h2>
-      
+
       <div class="punnett-section">
         <h3>Quadro de Punnett:</h3>
         <table class="punnett-square">
@@ -180,7 +180,7 @@
           <ul>
             {#each simulationResult.offspring_genotypes as geno}
               <li>
-                <strong>{geno.genotype}:</strong> {geno.fraction} ({geno.percentage}%) 
+                <strong>{geno.genotype}:</strong> {geno.fraction} ({geno.percentage}%)
                 <em>(Contagem: {geno.count})</em>
               </li>
             {/each}
