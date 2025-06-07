@@ -42,7 +42,7 @@ mock_experiments_data: List[Experiment] = [
     Experiment(id=9, name="Genética Mendeliana", category="Biologia", description="Entenda as leis da hereditariedade.", image_url="images/placeholder.png"),
 ]
 
-# Modelos Pydantic para Simulação Ácido-Base
+# Modelos Pydantic para Simulação Ácido-Base (AINDA PRESENTES POR ENQUANTO)
 class AcidBaseSimulationParams(BaseModel):
     acid_name: Optional[str] = "Ácido Forte Monoprótico"
     acid_concentration: float
@@ -63,50 +63,50 @@ class AcidBaseSimulationResult(BaseModel):
     indicator_color: Optional[str] = None
     message: Optional[str] = None
 
-# Função para realizar a simulação Ácido-Base
-def perform_acid_base_simulation(params: AcidBaseSimulationParams) -> AcidBaseSimulationResult:
-    acid_volume_l = params.acid_volume / 1000
-    base_volume_l = params.base_volume / 1000
-    mols_h_plus = params.acid_concentration * acid_volume_l
-    mols_oh_minus = params.base_concentration * base_volume_l
-    total_volume_l = acid_volume_l + base_volume_l
-    total_volume_ml = total_volume_l * 1000
-    final_ph: float; final_poh: Optional[float] = None; excess_reactant_val: Optional[str] = None; status_val: str; message_val: Optional[str] = None
-    if abs(mols_h_plus - mols_oh_minus) < 1e-9:
-        final_ph = 7.0; final_poh = 7.0; excess_reactant_val = "Nenhum"; status_val = "Neutra"; message_val = "Neutralização completa."
-    elif mols_h_plus > mols_oh_minus:
-        mols_h_plus_excess = mols_h_plus - mols_oh_minus
-        concentration_h_plus_final = mols_h_plus_excess / total_volume_l
-        if concentration_h_plus_final <= 0: final_ph = 14.0; message_val = "Concentração de H+ excesso resultou em valor não positivo."
-        else: final_ph = -math.log10(concentration_h_plus_final)
-        excess_reactant_val = "H+"; status_val = "Ácida"
-        if final_ph < 0: final_ph = 0
-        final_poh = 14.0 - final_ph
-    else:
-        mols_oh_minus_excess = mols_oh_minus - mols_h_plus
-        concentration_oh_minus_final = mols_oh_minus_excess / total_volume_l
-        if concentration_oh_minus_final <= 0: final_poh = 14.0; message_val = "Concentração de OH- excesso resultou em valor não positivo."
-        else: final_poh = -math.log10(concentration_oh_minus_final)
-        if final_poh < 0: final_poh = 0
-        final_ph = 14.0 - final_poh
-        excess_reactant_val = "OH-"; status_val = "Básica"
-    final_ph = round(final_ph, 2)
-    if final_poh is not None: final_poh = round(final_poh, 2)
-    indicator_color_val: Optional[str] = None
-    if params.indicator_name:
-        indicator_name_lower = params.indicator_name.strip().lower()
-        if indicator_name_lower == "fenolftaleína":
-            if final_ph < 8.2: indicator_color_val = "Incolor"
-            elif final_ph <= 10.0: indicator_color_val = "Rosa claro/Róseo"
-            else: indicator_color_val = "Carmim/Magenta"
-        elif indicator_name_lower == "azul de bromotimol":
-            if final_ph < 6.0: indicator_color_val = "Amarelo"
-            elif final_ph <= 7.6: indicator_color_val = "Verde"
-            else: indicator_color_val = "Azul"
-        else:
-            indicator_color_val = "Indicador não reconhecido"
-            message_val = (message_val + " " if message_val else "") + f"Indicador '{params.indicator_name}' não suportado."
-    return AcidBaseSimulationResult(final_ph=final_ph, final_poh=final_poh, total_volume_ml=round(total_volume_ml, 2), mols_h_plus_initial=round(mols_h_plus, 9), mols_oh_minus_initial=round(mols_oh_minus, 9), excess_reactant=excess_reactant_val, status=status_val, indicator_color=indicator_color_val, message=message_val)
+# Função para realizar a simulação Ácido-Base (COMENTAR ESTA FUNÇÃO)
+# def perform_acid_base_simulation(params: AcidBaseSimulationParams) -> AcidBaseSimulationResult:
+#     acid_volume_l = params.acid_volume / 1000
+#     base_volume_l = params.base_volume / 1000
+#     mols_h_plus = params.acid_concentration * acid_volume_l
+#     mols_oh_minus = params.base_concentration * base_volume_l
+#     total_volume_l = acid_volume_l + base_volume_l
+#     total_volume_ml = total_volume_l * 1000
+#     final_ph: float; final_poh: Optional[float] = None; excess_reactant_val: Optional[str] = None; status_val: str; message_val: Optional[str] = None
+#     if abs(mols_h_plus - mols_oh_minus) < 1e-9:
+#         final_ph = 7.0; final_poh = 7.0; excess_reactant_val = "Nenhum"; status_val = "Neutra"; message_val = "Neutralização completa."
+#     elif mols_h_plus > mols_oh_minus:
+#         mols_h_plus_excess = mols_h_plus - mols_oh_minus
+#         concentration_h_plus_final = mols_h_plus_excess / total_volume_l
+#         if concentration_h_plus_final <= 0: final_ph = 14.0; message_val = "Concentração de H+ excesso resultou em valor não positivo."
+#         else: final_ph = -math.log10(concentration_h_plus_final)
+#         excess_reactant_val = "H+"; status_val = "Ácida"
+#         if final_ph < 0: final_ph = 0
+#         final_poh = 14.0 - final_ph
+#     else:
+#         mols_oh_minus_excess = mols_oh_minus - mols_h_plus
+#         concentration_oh_minus_final = mols_oh_minus_excess / total_volume_l
+#         if concentration_oh_minus_final <= 0: final_poh = 14.0; message_val = "Concentração de OH- excesso resultou em valor não positivo."
+#         else: final_poh = -math.log10(concentration_oh_minus_final)
+#         if final_poh < 0: final_poh = 0
+#         final_ph = 14.0 - final_poh
+#         excess_reactant_val = "OH-"; status_val = "Básica"
+#     final_ph = round(final_ph, 2)
+#     if final_poh is not None: final_poh = round(final_poh, 2)
+#     indicator_color_val: Optional[str] = None
+#     if params.indicator_name:
+#         indicator_name_lower = params.indicator_name.strip().lower()
+#         if indicator_name_lower == "fenolftaleína":
+#             if final_ph < 8.2: indicator_color_val = "Incolor"
+#             elif final_ph <= 10.0: indicator_color_val = "Rosa claro/Róseo"
+#             else: indicator_color_val = "Carmim/Magenta"
+#         elif indicator_name_lower == "azul de bromotimol":
+#             if final_ph < 6.0: indicator_color_val = "Amarelo"
+#             elif final_ph <= 7.6: indicator_color_val = "Verde"
+#             else: indicator_color_val = "Azul"
+#         else:
+#             indicator_color_val = "Indicador não reconhecido"
+#             message_val = (message_val + " " if message_val else "") + f"Indicador '{params.indicator_name}' não suportado."
+#     return AcidBaseSimulationResult(final_ph=final_ph, final_poh=final_poh, total_volume_ml=round(total_volume_ml, 2), mols_h_plus_initial=round(mols_h_plus, 9), mols_oh_minus_initial=round(mols_oh_minus, 9), excess_reactant=excess_reactant_val, status=status_val, indicator_color=indicator_color_val, message=message_val)
 
 # Modelos Pydantic para Simulação de Lançamento Oblíquo
 class ProjectileLaunchParams(BaseModel):
@@ -435,11 +435,12 @@ def perform_mendelian_cross_simulation(params: MendelianCrossParams) -> Mendelia
 async def get_experiments():
     return mock_experiments_data
 
-@app.post("/api/simulation/chemistry/acid-base/start", response_model=AcidBaseSimulationResult)
-async def start_acid_base_simulation(params: AcidBaseSimulationParams):
-    if params.acid_concentration <= 0 or params.acid_volume <= 0 or params.base_concentration <= 0 or params.base_volume <= 0:
-        raise HTTPException(status_code=400, detail="Concentrações e volumes devem ser positivos e maiores que zero.")
-    return perform_acid_base_simulation(params)
+# Endpoint da API para Simulação Ácido-Base (COMENTAR ESTE ENDPOINT)
+# @app.post("/api/simulation/chemistry/acid-base/start", response_model=AcidBaseSimulationResult)
+# async def start_acid_base_simulation(params: AcidBaseSimulationParams):
+#     if params.acid_concentration <= 0 or params.acid_volume <= 0 or params.base_concentration <= 0 or params.base_volume <= 0:
+#         raise HTTPException(status_code=400, detail="Concentrações e volumes devem ser positivos e maiores que zero.")
+#     return perform_acid_base_simulation(params)
 
 @app.post("/api/simulation/physics/projectile-launch/start", response_model=ProjectileLaunchResult)
 async def start_projectile_launch_simulation(params: ProjectileLaunchParams):
@@ -469,3 +470,5 @@ async def save_simulation(simulation_data: SimulationData):
 @app.get("/api/simulations/{simulation_id}", status_code=501)
 async def get_simulation(simulation_id: str):
     return {"message": f"Funcionalidade de carregar simulação com ID {simulation_id} ainda não implementada."}
+
+[end of backend/main.py]
