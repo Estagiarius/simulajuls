@@ -31,6 +31,38 @@ cd ..
 echo "Starting frontend setup..."
 cd frontend
 
+# --- NVM and Node.js Setup ---
+NVM_VERSION="v0.39.7"
+NODE_VERSION="20"
+
+echo "Checking for NVM and Node.js..."
+
+# Check and Install NVM
+if [ ! -s "$HOME/.nvm/nvm.sh" ]; then
+  echo "NVM not found. Installing NVM ${NVM_VERSION}..."
+  curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
+  echo "NVM installation script executed."
+fi
+
+# Source NVM
+export NVM_DIR="$HOME/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  echo "Sourcing NVM..."
+  . "$NVM_DIR/nvm.sh"
+else
+  echo "ERROR: NVM script not found after attempting installation. Please check NVM installation."
+  exit 1
+fi
+
+# Install and Use Node.js
+echo "Installing and using Node.js version ${NODE_VERSION} via NVM..."
+nvm install "${NODE_VERSION}" # Installs if not present, and uses it
+nvm use "${NODE_VERSION}"     # Ensures it's used if already installed
+
+echo "Verifying Node.js version:"
+node -v
+# --- End of NVM and Node.js Setup ---
+
 # Install Node.js dependencies
 echo "Installing Node.js dependencies..."
 npm install

@@ -471,4 +471,5 @@ async def save_simulation(simulation_data: SimulationData):
 async def get_simulation(simulation_id: str):
     return {"message": f"Funcionalidade de carregar simulação com ID {simulation_id} ainda não implementada."}
 
+
 [end of backend/main.py]
