@@ -17,6 +17,25 @@ O simulador permite aos usuários selecionar um experimento pré-definido, confi
 
 Atualmente, as seguintes simulações estão implementadas:
 
+## Automated Execution (Recommended)
+
+The `run_simulation.sh` script automates the setup and launch of both the backend and frontend components of the simulator. This is the recommended way to start the application.
+
+To run the script, navigate to the project root directory in your terminal and execute:
+```bash
+./run_simulation.sh
+```
+
+**Note:** This script is primarily intended for Linux/macOS environments. Windows users may need to adapt the commands within the script or follow the manual steps outlined in the "Como Executar o Projeto Localmente" section. The script will:
+1.  Set up and start the Python backend server.
+2.  Set up and start the SvelteKit frontend development server.
+
+Once the script is running, you should be able to access the simulator in your browser, typically at `http://localhost:5173`. The backend will be running on `http://localhost:8000`.
+
+## Como Executar o Projeto Localmente
+
+Você precisará ter Python (3.7+) e Node.js (com npm, pnpm ou yarn) instalados.
+
 1.  **Química: Reação Ácido-Base**
     *   Configure as concentrações e volumes de um ácido e uma base (fortes e monopróticos/monohidroxílicos) e veja o pH resultante.
     *   Observe a mudança de cor com indicadores como Fenolftaleína ou Azul de Bromotimol.
