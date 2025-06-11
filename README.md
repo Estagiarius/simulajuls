@@ -17,6 +17,21 @@ O simulador permite aos usuários selecionar um experimento pré-definido, confi
 
 Atualmente, as seguintes simulações estão implementadas:
 
+1.  **Química: Reação Ácido-Base**
+    *   Configure as concentrações e volumes de um ácido e uma base (fortes e monopróticos/monohidroxílicos) e veja o pH resultante.
+    *   Observe a mudança de cor com indicadores como Fenolftaleína ou Azul de Bromotimol.
+    *   Acesse em: `http://localhost:5173/experiments/chemistry/acid-base` (após iniciar os servidores)
+
+2.  **Física: Lançamento Oblíquo**
+    *   Defina a velocidade inicial, ângulo de lançamento, altura inicial (opcional) e gravidade (opcional) de um projétil.
+    *   Visualize a trajetória, alcance máximo, altura máxima e tempo total de voo.
+    *   Acesse em: `http://localhost:5173/experiments/physics/projectile-launch`
+
+3.  **Biologia: Genética Mendeliana (Cruzamento Monoíbrido)**
+    *   Realize um cruzamento genético simples informando os genótipos dos pais para um gene com dois alelos.
+    *   Observe o Quadro de Punnett resultante e as proporções genotípicas e fenotípicas da prole.
+    *   Acesse em: `http://localhost:5173/experiments/biology/mendelian-genetics`
+
 ## Automated Execution (Recommended)
 
 The `run_simulation.sh` script automates the setup and launch of both the backend and frontend components of the simulator. This is the recommended way to start the application.
@@ -32,24 +47,9 @@ To run the script, navigate to the project root directory in your terminal and e
 
 Once the script is running, you should be able to access the simulator in your browser, typically at `http://localhost:5173`. The backend will be running on `http://localhost:8000`.
 
-## Como Executar o Projeto Localmente
-
-Você precisará ter Python (3.7+) e Node.js (com npm, pnpm ou yarn) instalados.
-
-1.  **Química: Reação Ácido-Base**
-    *   Configure as concentrações e volumes de um ácido e uma base (fortes e monopróticos/monohidroxílicos) e veja o pH resultante.
-    *   Observe a mudança de cor com indicadores como Fenolftaleína ou Azul de Bromotimol.
-    *   Acesse em: `http://localhost:5173/experiments/chemistry/acid-base` (após iniciar os servidores)
-
-2.  **Física: Lançamento Oblíquo**
-    *   Defina a velocidade inicial, ângulo de lançamento, altura inicial (opcional) e gravidade (opcional) de um projétil.
-    *   Visualize a trajetória, alcance máximo, altura máxima e tempo total de voo.
-    *   Acesse em: `http://localhost:5173/experiments/physics/projectile-launch`
-
-3.  **Biologia: Genética Mendeliana (Cruzamento Monoíbrido)**
-    *   Realize um cruzamento genético simples informando os genótipos dos pais para um gene com dois alelos.
-    *   Observe o Quadro de Punnett resultante e as proporções genotípicas e fenotípicas da prole.
-    *   Acesse em: `http://localhost:5173/experiments/biology/mendelian-genetics`
+To stop the servers:
+- Press `Ctrl+C` in the terminal where the script is running. This will stop the frontend development server.
+- The backend server, which was started in the background, might continue running. You may need to stop it manually by finding its process ID (e.g., using `ps aux | grep uvicorn`) and then using `kill <PID>`, or more directly with `pkill -f uvicorn` (this will kill all processes matching 'uvicorn').
 
 ## Como Executar o Projeto Localmente
 
