@@ -27,50 +27,58 @@ sleep 5
 # Navigate back to project root
 cd ..
 
+# --- NVM Setup ---
+echo "Setting up NVM and Node.js..."
+export NVM_DIR="$HOME/.nvm"
+# Source nvm if it exists
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Attempt to install nvm if not found
+if ! command -v nvm &> /dev/null
+then
+    echo "NVM command not found, attempting to install NVM v0.39.7..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    # Source nvm again after installation
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+fi
+
+# Check if NVM was successfully sourced/installed
+if ! command -v nvm &> /dev/null
+then
+    echo "ERROR: NVM command still not available after attempting installation. Please check NVM installation."
+    exit 1
+else
+    echo "NVM is available."
+fi
+
+NODE_VERSION_TO_USE="20"
+echo "Installing Node.js v${NODE_VERSION_TO_USE} (if not already installed)..."
+nvm install "${NODE_VERSION_TO_USE}" # Install Node.js v20 (or use if already installed)
+
+echo "Setting Node.js v${NODE_VERSION_TO_USE} as default for NVM..."
+nvm alias default "${NODE_VERSION_TO_USE}" # Optionally set as default
+
+echo "Verifying Node.js version managed by NVM:"
+nvm exec "${NODE_VERSION_TO_USE}" -- node -v
+# --- End of NVM Setup ---
+
 # Frontend setup and launch
 echo "Starting frontend setup..."
 cd frontend
 
-# --- NVM and Node.js Setup ---
-NVM_VERSION="v0.39.7"
-NODE_VERSION="20"
+# Clean up old dependencies
+echo "Removing old frontend dependencies..."
+rm -rf node_modules package-lock.json
 
-echo "Checking for NVM and Node.js..."
+# Install Node.js dependencies with Node v20
+echo "Installing Node.js dependencies with Node v${NODE_VERSION_TO_USE}..."
+nvm exec "${NODE_VERSION_TO_USE}" -- npm install
 
-# Check and Install NVM
-if [ ! -s "$HOME/.nvm/nvm.sh" ]; then
-  echo "NVM not found. Installing NVM ${NVM_VERSION}..."
-  curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
-  echo "NVM installation script executed."
-fi
-
-# Source NVM
-export NVM_DIR="$HOME/.nvm"
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-  echo "Sourcing NVM..."
-  . "$NVM_DIR/nvm.sh"
-else
-  echo "ERROR: NVM script not found after attempting installation. Please check NVM installation."
-  exit 1
-fi
-
-# Install and Use Node.js
-echo "Installing and using Node.js version ${NODE_VERSION} via NVM..."
-nvm install "${NODE_VERSION}" # Installs if not present, and uses it
-nvm use "${NODE_VERSION}"     # Ensures it's used if already installed
-
-echo "Verifying Node.js version:"
-node -v
-# --- End of NVM and Node.js Setup ---
-
-# Install Node.js dependencies
-echo "Installing Node.js dependencies..."
-npm install
-
-# Launch frontend server
-echo "Launching frontend server..."
+# Launch frontend server with Node v20
+echo "Launching frontend server with Node v${NODE_VERSION_TO_USE}..."
 echo "Frontend server starting. Attempting to access at http://localhost:5173 (or similar port shown by npm)"
-npm run dev
+nvm exec "${NODE_VERSION_TO_USE}" -- npm run dev
 
 # Script finished message and wait for background jobs
 echo "Script finished. If frontend is running in foreground, press Ctrl+C to stop."
