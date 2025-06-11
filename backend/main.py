@@ -470,6 +470,4 @@ async def save_simulation(simulation_data: SimulationData):
 @app.get("/api/simulations/{simulation_id}", status_code=501)
 async def get_simulation(simulation_id: str):
     return {"message": f"Funcionalidade de carregar simulação com ID {simulation_id} ainda não implementada."}
-
-
-[end of backend/main.py]
+# End of file
