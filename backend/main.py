@@ -31,15 +31,15 @@ app.add_middleware(
 
 # 2. Dados Mock (Existente)
 mock_experiments_data: List[Experiment] = [
-    Experiment(id=1, name="Reação Ácido-Base", category="Química", description="Observe a neutralização de um ácido por uma base.", image_url="images/placeholder.png"),
-    Experiment(id=2, name="Eletrólise da Água", category="Química", description="Decomponha a água em oxigênio e hidrogênio.", image_url="images/placeholder.png"),
-    Experiment(id=3, name="Titulação", category="Química", description="Determine a concentração de uma solução.", image_url="images/placeholder.png"),
-    Experiment(id=4, name="Lançamento Oblíquo", category="Física", description="Analise a trajetória de um projétil.", image_url="images/placeholder.png"),
-    Experiment(id=5, name="Plano Inclinado", category="Física", description="Estude as forças em um corpo em um plano inclinado.", image_url="images/placeholder.png"),
-    Experiment(id=6, name="Queda Livre", category="Física", description="Observe o movimento de um corpo sob a ação da gravidade.", image_url="images/placeholder.png"),
-    Experiment(id=7, name="Fotossíntese", category="Biologia", description="Veja como as plantas produzem energia.", image_url="images/placeholder.png"),
-    Experiment(id=8, name="Ciclo Celular", category="Biologia", description="Explore as fases da divisão celular.", image_url="images/placeholder.png"),
-    Experiment(id=9, name="Genética Mendeliana", category="Biologia", description="Entenda as leis da hereditariedade.", image_url="images/placeholder.png"),
+    Experiment(id=1, name="Reação Ácido-Base", category="Química", description="Observe a neutralização de um ácido por uma base.", image_url="/images/placeholder.png"),
+    Experiment(id=2, name="Eletrólise da Água", category="Química", description="Decomponha a água em oxigênio e hidrogênio.", image_url="/images/placeholder.png"),
+    Experiment(id=3, name="Titulação", category="Química", description="Determine a concentração de uma solução.", image_url="/images/placeholder.png"),
+    Experiment(id=4, name="Lançamento Oblíquo", category="Física", description="Analise a trajetória de um projétil.", image_url="/images/placeholder.png"),
+    Experiment(id=5, name="Plano Inclinado", category="Física", description="Estude as forças em um corpo em um plano inclinado.", image_url="/images/placeholder.png"),
+    Experiment(id=6, name="Queda Livre", category="Física", description="Observe o movimento de um corpo sob a ação da gravidade.", image_url="/images/placeholder.png"),
+    Experiment(id=7, name="Fotossíntese", category="Biologia", description="Veja como as plantas produzem energia.", image_url="/images/placeholder.png"),
+    Experiment(id=8, name="Ciclo Celular", category="Biologia", description="Explore as fases da divisão celular.", image_url="/images/placeholder.png"),
+    Experiment(id=9, name="Genética Mendeliana", category="Biologia", description="Entenda as leis da hereditariedade.", image_url="/images/placeholder.png"),
 ]
 
 # Modelos Pydantic para Simulação Ácido-Base (AINDA PRESENTES POR ENQUANTO)
