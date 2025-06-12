@@ -17,12 +17,15 @@
   let isLoading = false;
   let error = null;
 
+  // Função assíncrona para iniciar a simulação de lançamento de projétil.
+  // Envia os parâmetros para a API backend e processa a resposta.
   async function startSimulation() {
-    isLoading = true;
-    error = null;
-    simulationResult = null;
+    isLoading = true; // Ativa o indicador de carregamento.
+    error = null; // Limpa erros anteriores.
+    simulationResult = null; // Limpa resultados de simulações anteriores.
 
-    // Garantir que os tipos de dados estão corretos antes de enviar
+    // Garante que os tipos de dados dos parâmetros estão corretos (float) antes de enviar para a API.
+    // Os inputs HTML podem retornar strings, então a conversão explícita é uma boa prática.
     const payload = {
       initial_velocity: parseFloat(params.initial_velocity),
       launch_angle: parseFloat(params.launch_angle),
@@ -30,122 +33,140 @@
       gravity: parseFloat(params.gravity)
     };
 
-    console.log("Enviando para API Lançamento Oblíquo:", payload);
+    console.log("Enviando para API Lançamento Oblíquo:", payload); // Log para depuração.
 
     try {
+      // Realiza a chamada POST para o endpoint da API que inicia a simulação.
       const response = await fetch('http://localhost:8000/api/simulation/physics/projectile-launch/start', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json', // Informa à API que o corpo da requisição é JSON.
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload), // Converte o objeto payload para uma string JSON.
       });
 
+      // Verifica se a resposta da API foi bem-sucedida (status HTTP 2xx).
       if (!response.ok) {
+        // Se a resposta não for OK, tenta extrair detalhes do erro do corpo da resposta JSON.
+        // Se falhar ao parsear o JSON do erro, usa o statusText da resposta.
         const errorData = await response.json().catch(() => ({ detail: response.statusText }));
-        throw new Error(errorData.detail || `Erro HTTP: ${response.status}`);
+        throw new Error(errorData.detail || `Erro HTTP: ${response.status}`); // Lança um erro com a mensagem apropriada.
       }
 
+      // Se a resposta for OK, converte o corpo da resposta JSON para um objeto JavaScript.
       simulationResult = await response.json();
-      console.log("Resultado da simulação de Lançamento Oblíquo:", simulationResult);
+      console.log("Resultado da simulação de Lançamento Oblíquo:", simulationResult); // Log do resultado para depuração.
 
     } catch (e) {
+      // Captura quaisquer erros que ocorram durante a chamada fetch ou processamento da resposta.
       console.error("Falha ao iniciar simulação de Lançamento Oblíquo:", e);
-      error = e.message || "Ocorreu um erro desconhecido ao contatar a API de física.";
+      error = e.message || "Ocorreu um erro desconhecido ao contatar a API de física."; // Define a mensagem de erro para exibição.
     } finally {
-      isLoading = false;
+      // Este bloco é executado independentemente de ter ocorrido um erro ou não.
+      isLoading = false; // Desativa o indicador de carregamento.
     }
   }
 
   // Calcula o atributo viewBox para o SVG, para enquadrar corretamente a trajetória.
   // O viewBox define a "janela" de visualização das coordenadas internas do SVG.
-  // Formato: "minX minY width height"
+  // Formato: "minX minY width height".
+  // trajectory: Array de pontos da trajetória.
+  // maxRange: Alcance horizontal máximo do projétil.
+  // maxHeight: Altura máxima atingida pelo projétil.
+  // initialHeight: Altura inicial do lançamento.
   function getSvgViewBox(trajectory, maxRange, maxHeight, initialHeight) {
     if (!trajectory || trajectory.length === 0) {
-      return "0 0 100 100"; // ViewBox padrão se não houver trajetória
+      return "0 0 100 100"; // Retorna um viewBox padrão se não houver trajetória.
     }
-    const padding = 20; // Espaçamento visual ao redor da trajetória dentro do SVG
+    const padding = 20; // Define um espaçamento visual (margem) ao redor da trajetória dentro do SVG.
 
-    // Largura visual: alcance máximo + padding em ambos os lados.
-    // Se maxRange for 0, usa um valor padrão para evitar largura 0.
+    // Calcula a largura visual do viewBox.
+    // Baseia-se no alcance máximo (maxRange), adicionando padding em ambos os lados.
+    // Se maxRange for 0 (ex: lançamento vertical que cai no mesmo lugar), usa uma largura padrão de 100 unidades.
     const viewWidth = (maxRange > 0 ? maxRange : 100) + 2 * padding;
-    // Altura visual: altura máxima (considerando altura inicial se for maior que o pico da trajetória)
-    // + padding em cima e embaixo.
+
+    // Calcula a altura visual do viewBox.
+    // Considera a maior altura física relevante: o pico da trajetória (maxHeight) ou a altura inicial (initialHeight),
+    // o que for maior, para garantir que tudo seja visível. Adiciona padding em cima e embaixo.
+    // Se a altura efetiva for 0, usa uma altura padrão de 100 unidades.
     const effectiveMaxPhysicalY = Math.max(maxHeight, initialHeight);
     const viewHeight = (effectiveMaxPhysicalY > 0 ? effectiveMaxPhysicalY : 100) + 2 * padding;
 
-    // minX do viewBox: começa um 'padding' à esquerda da origem física (x=0).
+    // Define o minX do viewBox. Começa a visualização 'padding' unidades à esquerda da origem física (x=0).
+    // Isso centraliza a trajetória horizontalmente se ela começar em x=0.
     const minX = -padding;
-    // minY do viewBox: No SVG, o eixo Y cresce para baixo.
-    // Esta implementação de viewBox, junto com svgAdjustedY, faz com que:
-    // - O ponto (0,0) físico (origem do lançamento) seja mapeado para (0, altura_máxima_efetiva + padding) no sistema de coordenadas do SVG.
-    // - O eixo Y físico positivo (para cima) corresponda ao eixo Y SVG negativo (para cima).
-    // min-y define o valor Y no topo do viewBox. Para que o ponto mais alto da trajetória (maxHeight)
-    // fique visível com padding, e o "chão" (y=0 físico) também tenha padding abaixo dele,
-    // e considerando que svgAdjustedY inverte as coordenadas Y,
-    // o minY do viewBox é -padding.
+
+    // Define o minY do viewBox. No SVG, o eixo Y cresce para baixo.
+    // Esta configuração de viewBox, em conjunto com a função de ajuste svgAdjustedY,
+    // inverte o eixo Y para que ele se comporte como um sistema cartesiano tradicional (Y cresce para cima).
+    // O 'minY = -padding' posiciona a origem do viewBox de forma que o "chão" (y=0 físico)
+    // tenha 'padding' abaixo dele e o ponto mais alto da trajetória tenha 'padding' acima.
     const minY = -padding;
 
-    return `${minX} ${minY} ${viewWidth} ${viewHeight}`;
+    return `${minX} ${minY} ${viewWidth} ${viewHeight}`; // Retorna a string formatada do viewBox.
   }
 
+
   // Ajusta a coordenada X física para o sistema de coordenadas do SVG.
-  // Nesta implementação, o minX do viewBox é -padding.
-  // As coordenadas X da trajetória são usadas diretamente como coordenadas X no SVG,
-  // assumindo que a origem (x=0) da física corresponde a x=0 no sistema de coordenadas do viewBox.
-  // O padding lateral é gerenciado pelo tamanho e minX do viewBox.
+  // physicalX: A coordenada X no sistema de coordenadas da simulação física.
+  // trajectory: Array de pontos da trajetória (atualmente não usado nesta função, mas pode ser útil para escalas mais complexas).
+  // Nesta implementação, as coordenadas X da física são usadas diretamente como coordenadas X no SVG.
+  // O viewBox (com minX = -padding) já lida com o posicionamento e padding horizontal.
   function svgAdjustedX(physicalX, trajectory) {
     return physicalX;
   }
 
   // Ajusta e INVERTE a coordenada Y física para o sistema de coordenadas do SVG.
-  // physicalY: coordenada no sistema físico (y=0 é o solo, cresce para cima).
-  // overallMaxHeight: altura máxima atingida pela trajetória, medida a partir do solo (y=0 físico).
-  // physicalInitialHeight: altura inicial do lançamento (y0 físico).
-  // O SVG tem y=0 no topo da sua área de desenho e o eixo Y cresce para baixo.
-  // Esta função mapeia o Y físico para que o gráfico pareça correto (Y crescendo para cima) dentro do viewBox SVG.
+  // physicalY: Coordenada Y no sistema físico (y=0 é o solo, valores positivos são para cima).
+  // trajectory: Array de pontos da trajetória (atualmente não usado).
+  // overallMaxHeight: Altura máxima atingida pela trajetória, medida a partir do solo (y=0 físico).
+  // physicalInitialHeight: Altura inicial do lançamento (y0 físico).
+  // O SVG tem y=0 no topo e o eixo Y cresce para baixo. Esta função inverte o Y físico.
   function svgAdjustedY(physicalY, trajectory, overallMaxHeight, physicalInitialHeight) {
-    const padding = 20;
-    // Determina a maior altura física relevante (pico da trajetória ou altura inicial).
+    const padding = 20; // Mesmo padding usado em getSvgViewBox.
+    // Determina a maior altura física relevante para o cálculo da escala Y.
     const effectiveMaxPhysicalY = Math.max(overallMaxHeight, physicalInitialHeight);
-    // A coordenada Y no SVG é calculada para que:
-    // 1. O eixo Y físico seja invertido (valores Y físicos maiores ficam "mais para cima" no SVG).
-    // 2. Haja um 'padding' no topo do gráfico.
-    // O cálculo (effectiveMaxPhysicalY + padding) - physicalY faz essa inversão e posicionamento.
-    // - (effectiveMaxPhysicalY + padding) define uma linha de referência "acima" do ponto mais alto.
-    // - Subtrair physicalY inverte o eixo:
-    //   - Se physicalY = 0 (solo), Ysvg = effectiveMaxPhysicalY + padding (base do gráfico no SVG).
-    //   - Se physicalY = effectiveMaxPhysicalY (ponto mais alto), Ysvg = padding (topo do gráfico no SVG).
-    // Isso funciona em conjunto com o viewBox que tem minY = -padding.
+
+    // A transformação da coordenada Y para o SVG é feita para:
+    // 1. Inverter o eixo Y: No SVG, Y cresce para baixo; na física, Y cresce para cima.
+    //    A subtração de 'physicalY' de um valor de referência realiza essa inversão.
+    // 2. Posicionar a trajetória dentro do viewBox com padding.
+    // A expressão '(effectiveMaxPhysicalY + padding) - physicalY' faz isso:
+    //    - '(effectiveMaxPhysicalY + padding)' define uma linha de referência "acima" do ponto mais alto da trajetória no sistema SVG.
+    //    - Subtraindo 'physicalY':
+    //      - Se 'physicalY' é 0 (solo físico), o resultado é 'effectiveMaxPhysicalY + padding' (parte inferior do gráfico no SVG).
+    //      - Se 'physicalY' é 'effectiveMaxPhysicalY' (ponto mais alto físico), o resultado é 'padding' (parte superior do gráfico no SVG, perto do topo do viewBox).
+    // Esta lógica funciona em conjunto com o viewBox que tem minY = -padding e uma altura que acomoda effectiveMaxPhysicalY + 2*padding.
     return (effectiveMaxPhysicalY + padding) - physicalY;
   }
 
-  // Formata a lista de pontos da trajetória (objetos {x, y})
-  // em uma string única de coordenadas, conforme esperado pelo atributo `points`
-  // da tag `<polyline>` do SVG (ex: "x1,y1 x2,y2 x3,y3 ...").
+  // Formata a lista de pontos da trajetória (objetos {time, x, y})
+  // em uma string única de coordenadas "x,y" para o atributo `points` da tag `<polyline>` do SVG.
+  // Exemplo de saída: "x1,y1 x2,y2 x3,y3 ...".
+  // overallMaxHeight e physicalInitialHeight são passados para svgAdjustedY para o correto ajuste de escala.
   function formatTrajectoryForSvg(trajectory, overallMaxHeight, physicalInitialHeight) {
-    if (!trajectory) return "";
+    if (!trajectory) return ""; // Retorna string vazia se não houver trajetória.
     return trajectory
-      .map(p => `${svgAdjustedX(p.x, trajectory)},${svgAdjustedY(p.y, trajectory, overallMaxHeight, physicalInitialHeight)}`)
-      .join(" ");
+      .map(p => `${svgAdjustedX(p.x, trajectory)},${svgAdjustedY(p.y, trajectory, overallMaxHeight, physicalInitialHeight)}`) // Mapeia cada ponto para "x_svg,y_svg".
+      .join(" "); // Une todos os pontos formatados com um espaço.
   }
 
-  // Retorna uma amostra dos pontos da trajetória para exibição em tabela.
-  // Se a trajetória tiver muitos pontos, a tabela pode ficar muito longa.
-  // Esta função seleciona aproximadamente 'count' pontos, incluindo o primeiro e o último.
+  // Retorna uma amostra dos pontos da trajetória para exibição em uma tabela.
+  // Se a trajetória tiver muitos pontos, exibir todos pode tornar a tabela muito longa e lenta.
+  // Esta função seleciona aproximadamente 'count' pontos, incluindo sempre o primeiro e o último.
   function getTrajectorySample(trajectory, count = 10) {
-    if (!trajectory || trajectory.length === 0) return []; // Retorna vazio se não houver trajetória
-    if (trajectory.length <= count) return trajectory; // Retorna todos os pontos se forem poucos
+    if (!trajectory || trajectory.length === 0) return []; // Retorna array vazio se não houver trajetória.
+    if (trajectory.length <= count) return trajectory; // Retorna todos os pontos se a quantidade já for menor ou igual à desejada.
 
-    const sample = [];
-    // Calcula o passo para pegar 'count-1' pontos uniformemente espaçados.
-    // O último ponto é adicionado separadamente para garantir sua inclusão.
-    const step = Math.floor(trajectory.length / (count -1));
-    for (let i = 0; i < count -1 ; i++) {
-      sample.push(trajectory[i * step]);
+    const sample = []; // Array para armazenar os pontos da amostra.
+    // Calcula o 'step' (passo) para selecionar 'count-1' pontos uniformemente espaçados do array original.
+    // O último ponto da trajetória é adicionado separadamente para garantir sua inclusão.
+    const step = Math.floor(trajectory.length / (count - 1));
+    for (let i = 0; i < count - 1; i++) {
+      sample.push(trajectory[i * step]); // Adiciona o ponto da trajetória no índice calculado.
     }
-    sample.push(trajectory[trajectory.length - 1]); // Garante que o último ponto da trajetória seja incluído.
-    return sample;
+    sample.push(trajectory[trajectory.length - 1]); // Garante que o último ponto da trajetória original seja incluído na amostra.
+    return sample; // Retorna a amostra de pontos.
   }
 
 </script>
