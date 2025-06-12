@@ -3,7 +3,7 @@ from collections import Counter
 from fastapi import HTTPException
 from pydantic import BaseModel # Required for Type hints like Type[BaseModel]
 
-from backend.simulations.base_simulation import SimulationModule
+from ..base_simulation import SimulationModule
 from .models_mendelian_genetics import (
     MendelianCrossParams,
     GenotypeProportion,

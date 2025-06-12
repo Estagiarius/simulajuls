@@ -4,7 +4,7 @@ from typing import List, Optional, Type, Any, Dict
 from fastapi import HTTPException # For input validation if kept in module
 from pydantic import BaseModel # BaseModel is used by Type[BaseModel]
 
-from backend.simulations.base_simulation import SimulationModule, BaseSimulationParams # BaseSimulationParams not strictly needed here but good for context
+from ..base_simulation import SimulationModule, BaseSimulationParams # BaseSimulationParams not strictly needed here but good for context
 from .models_projectile import ProjectileLaunchParams, TrajectoryPoint, ProjectileLaunchResult
 
 class ProjectileModule(SimulationModule):

@@ -3,8 +3,8 @@ from typing import Type, Dict, Any # Adicionado Dict, Any
 from pydantic import BaseModel # BaseModel é usado no type hint de run_simulation
 from fastapi import HTTPException # Para levantar erros dentro da lógica se necessário
 
-from backend.simulations.base_simulation import SimulationModule, BaseSimulationParams, BaseSimulationResult # Corrigido o import para BaseSimulationParams
-from backend.simulations.chemistry.models_acid_base import AcidBaseSimulationParams, AcidBaseSimulationResult
+from ..base_simulation import SimulationModule, BaseSimulationParams, BaseSimulationResult # Corrigido o import para BaseSimulationParams
+from .models_acid_base import AcidBaseSimulationParams, AcidBaseSimulationResult
 
 class AcidBaseModule(SimulationModule):
 
