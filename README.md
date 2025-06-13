@@ -124,4 +124,40 @@ Você precisará ter Python (3.7+) e Node.js (com npm, pnpm ou yarn) instalados.
 *   Adicionar autenticação de usuário, se necessário.
 *   Configurar um ambiente de teste completo para o frontend.
 
-```
+---
+
+## Running on Windows
+
+To run the simulation environment on Windows:
+
+1.  **Prerequisites:**
+    *   **Python:** Ensure you have Python installed and added to your system's PATH. You can download it from [https://www.python.org/downloads/](https://www.python.org/downloads/).
+    *   **NVM for Windows:** Install NVM for Windows to manage Node.js versions. You can find the installer and instructions at [https://github.com/coreybutler/nvm-windows/releases](https://github.com/coreybutler/nvm-windows/releases). After installing, you might need to open a new terminal for `nvm` to be recognized.
+
+2.  **Run the script:**
+    *   Open a Command Prompt (cmd.exe) or PowerShell.
+    *   Navigate to the root directory of the project.
+    *   Execute the Windows batch script:
+        ```cmd
+        .\run_simulation.bat
+        ```
+
+3.  **What the script does:**
+    *   **Backend:**
+        *   Checks for Python.
+        *   Creates a Python virtual environment (`venv`) in the `backend` directory if it doesn't exist.
+        *   Installs required Python packages (`fastapi`, `uvicorn`, `pydantic`).
+        *   Starts the backend server in the background on `http://localhost:8000`.
+    *   **Frontend:**
+        *   Checks for `nvm-windows`.
+        *   Installs and uses the Node.js version specified in the script (currently v20).
+        *   Installs frontend dependencies (`npm install`) in the `frontend` directory.
+        *   Starts the frontend development server (usually on `http://localhost:5173`).
+
+4.  **Stopping the servers:**
+    *   **Frontend:** Press `Ctrl+C` in the terminal where the frontend server (`npm run dev`) is running.
+    *   **Backend:** The backend server runs in the background. You can stop it by closing the terminal window from which `run_simulation.bat` was executed, or by finding and stopping the `python.exe` process associated with Uvicorn (e.g., using Task Manager).
+
+If you encounter any issues, please ensure the prerequisites are correctly installed and configured.
+
+---
