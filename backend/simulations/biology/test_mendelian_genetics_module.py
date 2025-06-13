@@ -1,4 +1,5 @@
 import pytest
+from typing import Optional
 from backend.simulations.biology.mendelian_genetics_module import MendelianGeneticsModule
 from backend.simulations.biology.models_mendelian_genetics import (
     MendelianCrossParams,

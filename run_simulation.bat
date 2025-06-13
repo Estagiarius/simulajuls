@@ -1,63 +1,89 @@
 @echo off
 setlocal
+echo Starting script...
 
 REM --- Configuration ---
 set PYTHON_CMD=python
 set NODE_VERSION_TO_USE=20
-set NVM_CHECK_COMMAND=nvm --version
-
-REM --- Helper function to check if a command exists ---
-:command_exists
-where %1 >nul 2>nul
-if %errorlevel% equ 0 (
-    exit /b 0
-) else (
-    exit /b 1
-)
-
-echo Starting script...
+echo PYTHON_CMD set to: %PYTHON_CMD%
+echo NODE_VERSION_TO_USE set to: %NODE_VERSION_TO_USE%
 
 REM --- Backend Setup ---
 echo.
 echo Starting backend setup...
-cd backend
+pushd backend
+echo Current directory: %CD%
 
 REM Check for Python
-call :command_exists %PYTHON_CMD%
-if %errorlevel% neq 0 (
-    echo Python (%PYTHON_CMD%) not found in PATH.
-    echo Please install Python from https://www.python.org/downloads/ and ensure it's added to your PATH.
-    goto :eof
-)
-echo Python found.
+echo Checking for Python command: %PYTHON_CMD%
+where %PYTHON_CMD% >nul 2>nul
+set PYTHON_FOUND_ERRORLEVEL=%errorlevel%
+
+if %PYTHON_FOUND_ERRORLEVEL% neq 0 goto python_not_found
+echo Python command was found.
+goto python_check_done
+
+:python_not_found
+echo Python (%PYTHON_CMD%) not found in PATH.
+echo Please install Python from https://www.python.org/downloads/ and ensure it's added to your PATH.
+goto :eof_error_popped
+
+:python_check_done
+echo Python check complete.
+echo.
 
 REM Create Python virtual environment if it doesn't exist
-if not exist venv (
-    echo Creating Python virtual environment...
+echo Checking for venv directory at: %CD%+env
+IF EXIST "venv" (
+    echo 'venv' directory ALREADY exists.
+) ELSE (
+    echo 'venv' directory does NOT exist. Creating Python virtual environment...
     %PYTHON_CMD% -m venv venv
     if %errorlevel% neq 0 (
         echo Failed to create Python virtual environment. Exiting.
-        goto :eof
+        goto :eof_error_popped
     )
+    echo Virtual environment created.
 )
+echo Finished venv check/creation.
+echo.
 
-REM Activate virtual environment and install packages
-echo Activating virtual environment and installing packages...
-call venv\Scripts\activate.bat
+REM Activate virtual environment
+echo Activating virtual environment: call venv\Scriptsctivate.bat
+call venv\Scriptsctivate.bat
+set VENV_ACTIVATION_ERRORLEVEL=%errorlevel%
+echo Errorlevel from venv activation: %VENV_ACTIVATION_ERRORLEVEL%
+if %VENV_ACTIVATION_ERRORLEVEL% neq 0 (
+    echo WARNING: Virtual environment activation might have failed (Errorlevel: %VENV_ACTIVATION_ERRORLEVEL%).
+    echo This can happen if already active or due to path issues.
+) ELSE (
+    echo Virtual environment seems activated.
+)
+echo.
+
+REM Install Python packages
+echo Attempting to install Python packages: fastapi uvicorn pydantic
 pip install fastapi uvicorn pydantic
 if %errorlevel% neq 0 (
     echo Failed to install Python packages. Exiting.
-    goto :eof
+    goto :eof_error_popped
 )
+echo Python packages installed successfully.
+echo.
 
 REM Launch backend server
-echo Launching backend server...
-start "Backend Server" /B %PYTHON_CMD% -m uvicorn main:app --reload --port 8000
-echo Backend server started in background. Attempting to access at http://localhost:8000
-timeout /t 5 /nobreak >nul
+echo Attempting to launch backend server from %CD%
+echo Setting PYTHONPATH to include project root for module resolution.
+set PYTHONPATH=%CD%\..
+echo PYTHONPATH set to: %PYTHONPATH%
 
-REM Navigate back to project root
-cd ..
+start "Backend Server" /B %PYTHON_CMD% -m uvicorn main:app --reload --port 8000
+echo Backend server launch command issued. It should be running in the background.
+echo Check http://localhost:8000 after a few seconds.
+timeout /t 5 /nobreak >nul
+set PYTHONPATH=
+popd
+echo Current directory after POPD from backend: %CD%
 echo Backend setup complete.
 echo.
 
@@ -66,14 +92,16 @@ echo.
 echo Starting frontend setup...
 
 REM Check for NVM for Windows
-call :command_exists nvm
+echo Checking for NVM for Windows (nvm command)...
+where nvm >nul 2>nul
 if %errorlevel% neq 0 (
-    echo NVM for Windows (nvm) not found.
+    echo NVM for Windows (nvm command) not found.
     echo Please install NVM for Windows from https://github.com/coreybutler/nvm-windows/releases
-    echo After installation, please open a new terminal and re-run this script.
-    goto :eof
+    echo After installation, please open a NEW terminal and re-run this script.
+    goto :eof_error
 )
 echo NVM for Windows found.
+echo.
 
 REM Install and use the specified Node.js version
 echo Installing and using Node.js v%NODE_VERSION_TO_USE% (if not already installed)...
@@ -81,20 +109,21 @@ nvm install %NODE_VERSION_TO_USE%
 if %errorlevel% neq 0 (
     echo Failed to install Node.js v%NODE_VERSION_TO_USE% using NVM.
     echo Please ensure NVM for Windows is correctly installed and configured.
-    goto :eof
+    goto :eof_error
 )
 nvm use %NODE_VERSION_TO_USE%
 if %errorlevel% neq 0 (
     echo Failed to use Node.js v%NODE_VERSION_TO_USE% using NVM.
-    goto :eof
+    goto :eof_error
 )
-
-echo Verifying Node.js version:
+echo Successfully using Node.js v%NODE_VERSION_TO_USE%.
+echo Verifying Node.js and npm versions:
 node -v
 npm -v
 echo.
 
-cd frontend
+pushd frontend
+echo Current directory: %CD%
 
 REM Clean up old dependencies
 echo Removing old frontend dependencies (if they exist)...
@@ -106,30 +135,49 @@ if exist package-lock.json (
     echo Removing package-lock.json...
     del package-lock.json
 )
+echo Old dependencies cleanup finished.
+echo.
 
 REM Install Node.js dependencies
-echo Installing Node.js dependencies...
+echo Installing Node.js dependencies with npm install...
 npm install
 if %errorlevel% neq 0 (
     echo Failed to install Node.js dependencies. Exiting.
-    goto :eof
+    goto :eof_error_popped_frontend
 )
+echo Node.js dependencies installed successfully.
+echo.
 
 REM Launch frontend server
-echo Launching frontend server...
+echo Launching frontend server with 'npm run dev'...
 echo Frontend server starting. Attempting to access at http://localhost:5173 (or similar port shown by npm)
-REM Using start to run npm run dev, as it can be a long-running process
 start "Frontend Server" npm run dev
 
-cd ..
+popd
+echo Current directory after POPD from frontend: %CD%
 echo Frontend setup complete.
 echo.
 
-echo Script finished.
-echo Backend is running in the background (http://localhost:8000).
-echo Frontend dev server is running (check terminal for exact address, usually http://localhost:5173).
-echo Press Ctrl+C in the terminal where the frontend is running to stop it.
-echo To stop the backend, you may need to close the terminal or find the Python process.
+goto :eof_success
 
+:eof_error_popped_frontend
+popd
+goto :eof_error
+
+:eof_error_popped
+popd
+goto :eof_error
+
+:eof_error
+echo Script ended with an error.
+pause
 endlocal
-goto :eof
+exit /b 1
+
+:eof_success
+echo Script finished successfully.
+echo Backend should be running at http://localhost:8000
+echo Frontend should be running at http://localhost:5173 (or similar)
+pause
+endlocal
+exit /b 0
