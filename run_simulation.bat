@@ -43,7 +43,7 @@ echo Installing Node.js dependencies...
 npm install
 
 echo Starting frontend server...
-start "Frontend Server" cmd /c "npm run dev"
+start "Frontend Server" cmd /k "npm run dev"
 
 cd ..
 pause
