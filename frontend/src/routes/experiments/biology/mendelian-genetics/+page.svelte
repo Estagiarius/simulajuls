@@ -18,9 +18,23 @@
   let simulationResult = null;
   let isLoading = false;
   let error = null;
+  let dominantAlleleError = '';
 
   $: parent1GenotypeError = validateGenotypeInput(params.parent1_genotype);
   $: parent2GenotypeError = validateGenotypeInput(params.parent2_genotype);
+
+  $: {
+    const allele = params.dominant_allele;
+    if (allele === '') {
+      dominantAlleleError = 'Alelo Dominante é obrigatório.';
+    } else if (allele && allele.length !== 1) {
+      dominantAlleleError = 'Alelo Dominante deve ter exatamente 1 caractere.';
+    } else if (allele && !/^[a-zA-Z]$/.test(allele)) {
+      dominantAlleleError = 'Alelo Dominante deve ser uma letra (A-Z, a-z).';
+    } else {
+      dominantAlleleError = '';
+    }
+  }
 
   function validateGenotypeInput(genotype) {
     // 1. Handle null or undefined genotype
@@ -147,7 +161,10 @@
       <div class="form-grid">
         <div>
           <label for="dominant_allele">Alelo Dominante:</label>
-          <input type="text" id="dominant_allele" bind:value={params.dominant_allele} maxlength="1" pattern="[a-zA-Z]{1}" required>
+          <input type="text" id="dominant_allele" bind:value={params.dominant_allele} maxlength="1" required>
+          {#if dominantAlleleError}
+            <small class="input-error">{dominantAlleleError}</small>
+          {/if}
         </div>
         <div>
           <label for="recessive_allele">Alelo Recessivo:</label>
@@ -164,7 +181,7 @@
       </div>
     </fieldset>
 
-    <button type="submit" class="submit-button" disabled={isLoading || parent1GenotypeError || parent2GenotypeError}>
+    <button type="submit" class="submit-button" disabled={isLoading || parent1GenotypeError || parent2GenotypeError || !!dominantAlleleError}>
       {#if isLoading}
         Calculando Proporções...
       {:else}
