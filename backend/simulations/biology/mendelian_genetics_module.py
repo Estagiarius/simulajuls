@@ -20,7 +20,7 @@ class MendelianGeneticsModule(SimulationModule):
         return "Genética Mendeliana"
 
     def get_category(self) -> str:
-        return "Biologia"
+        return "Biology"
 
     def get_description(self) -> str:
         return "Simula cruzamentos genéticos Mendelianos e calcula proporções genotípicas e fenotípicas."

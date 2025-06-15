@@ -64,9 +64,11 @@
               {:else}
                  <p class="image-placeholder">[Imagem Ilustrativa]</p>
               {/if}
-              <button style="background-color: #ADD8E6; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
-                Iniciar Simulação
-              </button>
+              <a href={`/experiments/${exp.category.toLowerCase()}/${exp.id}`} style="text-decoration: none;">
+                <button style="background-color: #ADD8E6; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; width: 100%;">
+                  Iniciar Simulação
+                </button>
+              </a>
             </div>
           {/each}
         </div>

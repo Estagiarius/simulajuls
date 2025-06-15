@@ -33,7 +33,7 @@
     console.log("Enviando para API Lançamento Oblíquo:", payload);
 
     try {
-      const response = await fetch('http://localhost:8000/api/simulation/physics/projectile-launch/start', {
+      const response = await fetch('http://localhost:8000/api/simulation/projectile-launch/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -57,7 +57,7 @@
     console.log("Enviando para API Genética Mendeliana:", payload);
 
     try {
-      const response = await fetch('http://localhost:8000/api/simulation/biology/mendelian-genetics/start', {
+      const response = await fetch('http://localhost:8000/api/simulation/mendelian-genetics/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
