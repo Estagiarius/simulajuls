@@ -38,21 +38,40 @@ echo.
 
 echo.
 echo --- Checking for npm ---
-echo Attempting to run 'npm --version'. Please wait...
+echo Attempting to run 'npm --version' in a subshell. Please wait...
 echo If the script hangs here, there might be an issue with your npm installation or PATH.
-npm --version
+
+REM Define a temporary file for npm version output
+set NPM_VERSION_TMP_FILE=%TEMP%\npm_version_output.txt
+
+REM Run npm --version in a subshell and redirect its output
+cmd /c "npm --version > %NPM_VERSION_TMP_FILE% 2>&1"
 set NPM_ERRORLEVEL=%errorlevel%
-echo Captured errorlevel from 'npm --version': %NPM_ERRORLEVEL%
+
+echo Captured errorlevel from 'cmd /c npm --version': %NPM_ERRORLEVEL%
+
 if %NPM_ERRORLEVEL% neq 0 (
     echo.
-    echo Error: 'npm --version' command failed (errorlevel %NPM_ERRORLEVEL%) or npm is not installed/found in PATH.
+    echo Error: 'npm --version' command failed when run in a subshell (errorlevel %NPM_ERRORLEVEL%).
+    echo Output/Error from npm (if any) might be in %NPM_VERSION_TMP_FILE%
     echo Please ensure Node.js and npm are correctly installed and accessible.
     echo You can try running 'npm --version' manually in a new command prompt to diagnose.
     echo.
     pause
     exit /b 1
 )
-echo 'npm --version' command successful (errorlevel %NPM_ERRORLEVEL%). npm found.
+
+echo 'npm --version' command executed via subshell successfully (errorlevel %NPM_ERRORLEVEL%).
+REM Optionally, display the version from the temp file
+if exist %NPM_VERSION_TMP_FILE% (
+    echo Content of npm version output file (%NPM_VERSION_TMP_FILE%):
+    type %NPM_VERSION_TMP_FILE%
+    del %NPM_VERSION_TMP_FILE%
+    echo.
+) else (
+    echo Warning: npm version output file (%NPM_VERSION_TMP_FILE%) was not created.
+)
+echo npm found.
 echo.
 
 echo --- Backend Setup ---
