@@ -221,7 +221,7 @@
             width="100%"
             height="300"
             viewBox="{getSvgViewBox(simulationResult.trajectory, simulationResult.max_range, simulationResult.max_height, simulationResult.parameters_used.initial_height)}"
-            preserveAspectRatio="xMidYMin meet" <!-- Kept xMidYMin meet as implemented -->
+            preserveAspectRatio="xMidYMin meet"
             style="border: 1px solid #ccc; background-color: #f0f8ff;"
           >
             <!-- Eixos (simplificado) - Using version from Turn 40 prompt -->
