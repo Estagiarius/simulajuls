@@ -19,6 +19,7 @@
   let isLoading = false;
   let error = null;
   let dominantAlleleError = '';
+  let recessiveAlleleError = '';
 
   $: parent1GenotypeError = validateGenotypeInput(params.parent1_genotype);
   $: parent2GenotypeError = validateGenotypeInput(params.parent2_genotype);
@@ -33,6 +34,19 @@
       dominantAlleleError = 'Alelo Dominante deve ser uma letra (A-Z, a-z).';
     } else {
       dominantAlleleError = '';
+    }
+  }
+
+  $: {
+    const allele = params.recessive_allele;
+    if (allele === '') {
+      recessiveAlleleError = 'Alelo Recessivo é obrigatório.';
+    } else if (allele && allele.length !== 1) {
+      recessiveAlleleError = 'Alelo Recessivo deve ter exatamente 1 caractere.';
+    } else if (allele && !/^[a-zA-Z]$/.test(allele)) {
+      recessiveAlleleError = 'Alelo Recessivo deve ser uma letra (A-Z, a-z).';
+    } else {
+      recessiveAlleleError = '';
     }
   }
 
@@ -168,7 +182,10 @@
         </div>
         <div>
           <label for="recessive_allele">Alelo Recessivo:</label>
-          <input type="text" id="recessive_allele" bind:value={params.recessive_allele} maxlength="1" pattern="[a-zA-Z]{1}" required>
+          <input type="text" id="recessive_allele" bind:value={params.recessive_allele} maxlength="1" required>
+          {#if recessiveAlleleError}
+            <small class="input-error">{recessiveAlleleError}</small>
+          {/if}
         </div>
         <div>
           <label for="dominant_phenotype_description">Descrição do Fenótipo Dominante:</label>
@@ -181,7 +198,7 @@
       </div>
     </fieldset>
 
-    <button type="submit" class="submit-button" disabled={isLoading || parent1GenotypeError || parent2GenotypeError || !!dominantAlleleError}>
+    <button type="submit" class="submit-button" disabled={isLoading || parent1GenotypeError || parent2GenotypeError || !!dominantAlleleError || !!recessiveAlleleError}>
       {#if isLoading}
         Calculando Proporções...
       {:else}
