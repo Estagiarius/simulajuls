@@ -162,5 +162,5 @@ class MendelianGeneticsModule(SimulationModule):
             punnett_square=punnett_square_genotypes,
             offspring_genotypes=offspring_genotype_proportions,
             offspring_phenotypes=offspring_phenotype_proportions,
-            parameters_used=updated_params # Pass the potentially updated (stripped alleles) params
+            parameters_used=updated_params.model_dump() # Pass the potentially updated (stripped alleles) params
         )
