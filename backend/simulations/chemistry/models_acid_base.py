@@ -3,12 +3,16 @@ from pydantic import BaseModel, Field # Field pode ser usado para validação se
 from backend.simulations.base_simulation import BaseSimulationParams, BaseSimulationResult
 
 class AcidBaseSimulationParams(BaseSimulationParams):
-    acid_name: Optional[str] = Field(default="Ácido Forte", description="Nome do ácido (ex: HCl, H₂SO₄)")
+    acid_name: Optional[str] = Field(default="Ácido Forte", description="Nome do ácido (ex: HCl, H₂SO₄, CH₃COOH)")
     acid_concentration: float = Field(gt=0, description="Concentração molar do ácido (mol/L)")
     acid_volume: float = Field(gt=0, description="Volume de ácido a ser usado (mL)")
-    base_name: Optional[str] = Field(default="Base Forte", description="Nome da base (ex: NaOH, Ca(OH)₂)")
+    acid_ka: Optional[float] = Field(default=None, gt=0, description="Constante de ionização do ácido (Ka) para ácidos fracos")
+
+    base_name: Optional[str] = Field(default="Base Forte", description="Nome da base (ex: NaOH, Ca(OH)₂, NH₃)")
     base_concentration: float = Field(gt=0, description="Concentração molar da base (mol/L)")
     base_volume: float = Field(gt=0, description="Volume de base a ser adicionado (mL)")
+    base_kb: Optional[float] = Field(default=None, gt=0, description="Constante de ionização da base (Kb) para bases fracas")
+
     indicator_name: Optional[str] = Field(default=None, description="Nome do indicador de pH (ex: Fenolftaleína, Vermelho de Metila)")
 
 class AcidBaseSimulationResult(BaseSimulationResult):
@@ -29,3 +33,7 @@ class AcidBaseSimulationResult(BaseSimulationResult):
     status: str = Field(description="Status da solução (Ácida, Neutra, Básica)")
     indicator_color: Optional[str] = Field(default=None, description="Cor resultante do indicador")
     message: Optional[str] = Field(default=None, description="Mensagem adicional sobre a simulação")
+    is_weak_acid_calculation: Optional[bool] = Field(default=None, description="Indica se o cálculo envolveu um ácido fraco")
+    is_weak_base_calculation: Optional[bool] = Field(default=None, description="Indica se o cálculo envolveu uma base fraca")
+    ka_used: Optional[float] = Field(default=None, description="Valor de Ka utilizado no cálculo, se aplicável")
+    kb_used: Optional[float] = Field(default=None, description="Valor de Kb utilizado no cálculo, se aplicável")

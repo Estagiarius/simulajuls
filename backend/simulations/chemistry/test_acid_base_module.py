@@ -218,3 +218,160 @@ def test_methyl_orange_indicator_colors():
     result_yellow_neutral = module.run_simulation(params_yellow_neutral) # pH 7.0
     assert result_yellow_neutral.final_ph > 4.4
     assert result_yellow_neutral.indicator_color == "Amarelo"
+
+# Testes adicionados para Sprint 2 (Ácidos/Bases Fracos)
+
+KA_CH3COOH = 1.8e-5
+KB_NH3 = 1.8e-5
+
+# Testes para Ácidos Fracos Puros
+def test_weak_acid_ch3cooh_pure():
+    params = AcidBaseSimulationParams(
+        acid_name="CH3COOH", acid_concentration=0.1, acid_volume=100,
+        acid_ka=KA_CH3COOH,
+        base_name="Nenhuma", base_concentration=0, base_volume=0
+    )
+    result = module.run_simulation(params)
+    assert abs(result.final_ph - 2.88) < 0.01 # pH ~2.875
+    assert result.status == "Ácida"
+    assert result.is_weak_acid_calculation is True
+    assert result.ka_used == KA_CH3COOH
+    assert result.is_weak_base_calculation is False
+    assert result.kb_used is None
+
+def test_weak_acid_zero_concentration():
+    params = AcidBaseSimulationParams(
+        acid_name="CH3COOH", acid_concentration=0, acid_volume=100,
+        acid_ka=KA_CH3COOH,
+        base_name="Nenhuma", base_concentration=0, base_volume=0
+    )
+    result = module.run_simulation(params)
+    assert result.final_ph == 7.0
+    assert result.status == "Neutra (água pura)"
+    assert result.is_weak_acid_calculation is False # Não houve cálculo fraco efetivo com conc 0
+
+# Testes para Bases Fracas Puras
+def test_weak_base_nh3_pure():
+    params = AcidBaseSimulationParams(
+        base_name="NH3", base_concentration=0.1, base_volume=100,
+        base_kb=KB_NH3,
+        acid_name="Nenhum", acid_concentration=0, acid_volume=0
+    )
+    result = module.run_simulation(params)
+    assert abs(result.final_ph - 11.12) < 0.01 # pH ~11.125
+    assert result.status == "Básica"
+    assert result.is_weak_base_calculation is True
+    assert result.kb_used == KB_NH3
+    assert result.is_weak_acid_calculation is False
+
+def test_weak_base_zero_concentration():
+    params = AcidBaseSimulationParams(
+        base_name="NH3", base_concentration=0, base_volume=100,
+        base_kb=KB_NH3,
+        acid_name="Nenhum", acid_concentration=0, acid_volume=0
+    )
+    result = module.run_simulation(params)
+    assert result.final_ph == 7.0
+    assert result.status == "Neutra (água pura)"
+    assert result.is_weak_base_calculation is False
+
+# Testes de Titulação: Ácido Fraco (CH3COOH) com Base Forte (NaOH)
+def test_titration_ch3cooh_naoh_half_equivalence():
+    params = AcidBaseSimulationParams(
+        acid_name="CH3COOH", acid_concentration=0.1, acid_volume=50, acid_ka=KA_CH3COOH,
+        base_name="NaOH", base_concentration=0.1, base_volume=25 # Metade do volume para equivalência
+    )
+    result = module.run_simulation(params)
+    assert abs(result.final_ph - 4.74) < 0.01 # pH = pKa
+    assert result.status == "Ácida (Tampão HA/A⁻)"
+    assert result.is_weak_acid_calculation is True
+    assert result.ka_used == KA_CH3COOH
+    assert result.is_weak_base_calculation is False
+
+def test_titration_ch3cooh_naoh_equivalence_point():
+    params = AcidBaseSimulationParams(
+        acid_name="CH3COOH", acid_concentration=0.1, acid_volume=50, acid_ka=KA_CH3COOH,
+        base_name="NaOH", base_concentration=0.1, base_volume=50 # Ponto de equivalência
+    )
+    result = module.run_simulation(params)
+    assert abs(result.final_ph - 8.72) < 0.01
+    assert result.status == "Básica (Hidrólise de A⁻)"
+    assert result.is_weak_acid_calculation is True
+    assert result.ka_used == KA_CH3COOH
+
+def test_titration_ch3cooh_naoh_after_equivalence():
+    params = AcidBaseSimulationParams(
+        acid_name="CH3COOH", acid_concentration=0.1, acid_volume=50, acid_ka=KA_CH3COOH,
+        base_name="NaOH", base_concentration=0.1, base_volume=75 # Excesso de NaOH
+    )
+    result = module.run_simulation(params)
+    # Mols CH3COOH = 0.005. Mols NaOH = 0.0075. Excesso NaOH = 0.0025 mol. Vol total = 125ml.
+    # [OH-]excess = 0.0025 / 0.125 = 0.02M. pOH = 1.70. pH = 12.30.
+    assert abs(result.final_ph - 12.30) < 0.01
+    assert result.status == "Básica (Excesso de OH⁻)"
+    assert result.is_weak_acid_calculation is True # Ka foi usado para determinar o comportamento até P.E.
+    assert result.ka_used == KA_CH3COOH
+
+
+# Testes de Titulação: Base Fraca (NH3) com Ácido Forte (HCl)
+def test_titration_nh3_hcl_half_equivalence():
+    params = AcidBaseSimulationParams(
+        base_name="NH3", base_concentration=0.1, base_volume=50, base_kb=KB_NH3,
+        acid_name="HCl", acid_concentration=0.1, acid_volume=25 # Metade do volume para equivalência
+    )
+    result = module.run_simulation(params)
+    assert abs(result.final_ph - 9.26) < 0.01 # pOH = pKb=4.74, pH = 14-4.74 = 9.26
+    assert result.status == "Básica (Tampão B/BH⁺)"
+    assert result.is_weak_base_calculation is True
+    assert result.kb_used == KB_NH3
+
+def test_titration_nh3_hcl_equivalence_point():
+    params = AcidBaseSimulationParams(
+        base_name="NH3", base_concentration=0.1, base_volume=50, base_kb=KB_NH3,
+        acid_name="HCl", acid_concentration=0.1, acid_volume=50 # Ponto de equivalência
+    )
+    result = module.run_simulation(params)
+    assert abs(result.final_ph - 5.28) < 0.01
+    assert result.status == "Ácida (Hidrólise de BH⁺)"
+    assert result.is_weak_base_calculation is True
+    assert result.kb_used == KB_NH3
+
+def test_titration_nh3_hcl_after_equivalence():
+    params = AcidBaseSimulationParams(
+        base_name="NH3", base_concentration=0.1, base_volume=50, base_kb=KB_NH3,
+        acid_name="HCl", acid_concentration=0.1, acid_volume=75 # Excesso de HCl
+    )
+    result = module.run_simulation(params)
+    # Mols NH3 = 0.005. Mols HCl = 0.0075. Excesso HCl = 0.0025 mol. Vol total = 125ml.
+    # [H+]excess = 0.0025 / 0.125 = 0.02M. pH = 1.70.
+    assert abs(result.final_ph - 1.70) < 0.01
+    assert result.status == "Ácida (Excesso de H⁺)"
+    assert result.is_weak_base_calculation is True # Kb foi usado
+    assert result.kb_used == KB_NH3
+
+# Teste para Ácido Fraco vs Base Fraca
+def test_weak_acid_weak_base_mixture():
+    params = AcidBaseSimulationParams(
+        acid_name="CH3COOH", acid_concentration=0.1, acid_volume=50, acid_ka=KA_CH3COOH,
+        base_name="NH3", base_concentration=0.1, base_volume=50, base_kb=KB_NH3
+    )
+    result = module.run_simulation(params)
+    assert result.final_ph == -1.0 # Indicativo de não calculado/erro
+    assert "não é suportado" in result.message
+    assert result.status == "Indeterminado (WA vs WB)"
+    assert result.is_weak_acid_calculation is True
+    assert result.is_weak_base_calculation is True
+    assert result.ka_used == KA_CH3COOH
+    assert result.kb_used == KB_NH3
+
+# Teste para Ka inválido
+def test_invalid_ka_value():
+    with pytest.raises(HTTPException) as exc_info:
+        AcidBaseSimulationParams(
+            acid_name="CH3COOH", acid_concentration=0.1, acid_volume=50, acid_ka=-1.0,
+            base_name="NaOH", base_concentration=0.1, base_volume=25
+        )
+    assert exc_info.value.status_code == 422
+
+def test_run_simulation_with_invalid_ka():
+    pass
