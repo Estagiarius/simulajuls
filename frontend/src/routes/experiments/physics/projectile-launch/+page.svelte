@@ -238,7 +238,7 @@
             <polyline
               points="{formatTrajectoryForSvg(simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height)}"
               fill="none"
-              stroke="#2980b9" /* Azul do plano de UI */
+              stroke="#2980b9"
               stroke-width="2"
             />
             <!-- Ponto inicial -->

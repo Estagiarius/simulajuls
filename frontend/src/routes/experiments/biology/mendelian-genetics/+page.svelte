@@ -126,7 +126,7 @@
       <fieldset>
         <legend>Progenitor 1</legend>
         <label for="parent1_genotype">Genótipo do Progenitor 1 (ex: AA, Aa, aa):</label>
-        <input type="text" id="parent1_genotype" bind:value={params.parent1_genotype} maxlength="2" pattern="[a-zA-Z]{2}" title="Digite 2 letras para o genótipo (ex: Aa)" required>
+        <input type="text" id="parent1_genotype" bind:value={params.parent1_genotype} maxlength="2" required>
         {#if parent1GenotypeError}
           <small class="input-error">{parent1GenotypeError}</small>
         {/if}
@@ -135,7 +135,7 @@
       <fieldset>
         <legend>Progenitor 2</legend>
         <label for="parent2_genotype">Genótipo do Progenitor 2 (ex: AA, Aa, aa):</label>
-        <input type="text" id="parent2_genotype" bind:value={params.parent2_genotype} maxlength="2" pattern="[a-zA-Z]{2}" title="Digite 2 letras para o genótipo (ex: Aa)" required>
+        <input type="text" id="parent2_genotype" bind:value={params.parent2_genotype} maxlength="2" required>
         {#if parent2GenotypeError}
           <small class="input-error">{parent2GenotypeError}</small>
         {/if}
