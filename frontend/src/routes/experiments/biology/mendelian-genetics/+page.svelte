@@ -147,11 +147,11 @@
       <div class="form-grid">
         <div>
           <label for="dominant_allele">Alelo Dominante:</label>
-          <input type="text" id="dominant_allele" bind:value={params.dominant_allele} maxlength="1" pattern="[a-zA-Z]{1}">
+          <input type="text" id="dominant_allele" bind:value={params.dominant_allele} maxlength="1" pattern="[a-zA-Z]{1}" required>
         </div>
         <div>
           <label for="recessive_allele">Alelo Recessivo:</label>
-          <input type="text" id="recessive_allele" bind:value={params.recessive_allele} maxlength="1" pattern="[a-zA-Z]{1}">
+          <input type="text" id="recessive_allele" bind:value={params.recessive_allele} maxlength="1" pattern="[a-zA-Z]{1}" required>
         </div>
         <div>
           <label for="dominant_phenotype_description">Descrição do Fenótipo Dominante:</label>
