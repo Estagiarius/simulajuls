@@ -38,7 +38,7 @@
     console.log("Enviando para API:", payload); // Log para depuração
 
     try {
-      const response = await fetch('http://localhost:8000/api/simulation/chemistry/acid-base/start', {
+      const response = await fetch('http://localhost:8000/api/simulation/acid-base/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

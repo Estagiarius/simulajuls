@@ -15,7 +15,7 @@ class AcidBaseModule(SimulationModule):
         return "Reação Ácido-Base"
 
     def get_category(self) -> str:
-        return "Química"
+        return "Chemistry"
 
     def get_description(self) -> str:
         return "Simula a reação entre um ácido e uma base, calculando o pH final e a cor do indicador."

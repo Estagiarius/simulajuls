@@ -16,7 +16,7 @@ class ProjectileModule(SimulationModule):
         return "Lançamento Oblíquo"
 
     def get_category(self) -> str:
-        return "Física"
+        return "Physics"
 
     def get_description(self) -> str:
         return "Analise a trajetória de um projétil em lançamento oblíquo."
