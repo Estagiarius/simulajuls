@@ -255,6 +255,7 @@
   </form>
 
   {#if simulationResult}
+    {#if simulationResult.units_used && simulationResult.parameters_used && simulationResult.trajectory && simulationResult.trajectory.length > 0}
     <section class="results-section" transition:fade={{ duration: 300 }}>
       <h2>Resultados do Lançamento</h2>
       <div class="results-summary-grid">
@@ -338,6 +339,30 @@
         </table>
       </div>
     </section>
+    {:else if simulationResult}
+    <section class="results-section" transition:fade={{ duration: 300 }}>
+      <h2>Resultados da Simulação (Dados Incompletos)</h2>
+      <p class="error-message">
+        Os resultados da simulação foram recebidos, mas alguns dados necessários para a exibição completa estão ausentes (ex: `units_used`, `parameters_used` ou `trajectory`).
+      </p>
+      <p><strong>Dados recebidos:</strong></p>
+      <pre class="raw-json-output">{JSON.stringify(simulationResult, null, 2)}</pre>
+
+      <!-- Tentativa de exibir dados básicos se disponíveis -->
+      <h4>Sumário Básico (se disponível):</h4>
+      <ul>
+        {#if simulationResult.max_range !== undefined}
+          <li>Alcance Máximo: {simulationResult.max_range.toFixed(2)} {simulationResult.units_used ? simulationResult.units_used.distance : ''}</li>
+        {/if}
+        {#if simulationResult.max_height !== undefined}
+          <li>Altura Máxima: {simulationResult.max_height.toFixed(2)} {simulationResult.units_used ? simulationResult.units_used.distance : ''}</li>
+        {/if}
+        {#if simulationResult.total_time !== undefined}
+          <li>Tempo Total de Voo: {simulationResult.total_time.toFixed(2)} {simulationResult.units_used ? simulationResult.units_used.time : ''}</li>
+        {/if}
+      </ul>
+    </section>
+    {/if}
   {/if}
 
   {#if error}
@@ -414,6 +439,25 @@
   .results-section h2 { margin-top: 0; margin-bottom:15px; color: #2980b9; text-align:center; }
   .results-section h3 { margin-top: 20px; margin-bottom:10px; color: #34495e; }
   .results-section h4 { margin-top: 20px; margin-bottom:5px; color: #34495e; font-size: 1em; font-weight:bold; }
+
+  .error-message {
+    color: #c0392b; /* Darker red for errors */
+    background-color: #fdecea;
+    border: 1px solid #e74c3c;
+    padding: 10px; border-radius: 4px; margin-top: 20px;
+  }
+  .raw-json-output {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap; /* Wrap long lines */
+    word-break: break-all; /* Break words if necessary */
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85em;
+  }
 
   .error-message {
     color: #FFA500; background-color: #fff3e0; border: 1px solid #FFA500;
