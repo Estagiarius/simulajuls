@@ -45,9 +45,10 @@
       initial_velocity_unit: initialVelocityUnit,
       initial_height_unit: initialHeightUnit,
       output_units: {
-        distance: outputDistanceUnit,
-        velocity: outputVelocityUnit,
-        time: outputTimeUnit
+        velocity_unit: outputVelocityUnit,
+        time_unit: outputTimeUnit,
+        range_unit: outputDistanceUnit,
+        height_unit: outputDistanceUnit // Assuming height_unit uses the same selection as range_unit
       }
     };
 
