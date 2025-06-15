@@ -57,3 +57,46 @@ A refatoração teve como objetivo principal endereçar esses pontos, implementa
 ## Conclusão
 
 A refatoração implementada representa uma decisão estratégica para estabelecer uma fundação de software mais robusta e preparada para o crescimento futuro do "Simulador de Experimentos Educativos". Os benefícios em termos de organização, manutenibilidade, testabilidade e, fundamentalmente, escalabilidade, são considerados preponderantes sobre a complexidade inicial introduzida. Esta abordagem visa prevenir que o projeto se torne difícil de gerenciar à medida que evolui, alinhando-se com boas práticas de engenharia de software. O `HANDOVER_DOCUMENT.md` também foi criado para auxiliar na transição e compreensão desta arquitetura.
+
+---
+
+## AD-001: Unit Handling in Physics Simulation (Projectile Module)
+
+*   **Status:** Decidido e Implementado
+*   **Context:**
+    *   O módulo de simulação de lançamento de projéteis inicialmente utilizava unidades SI (metros, segundos, m/s) para todas as entradas e saídas.
+    *   Havia a necessidade de melhorar a experiência do usuário, permitindo que fornecessem dados de entrada em unidades mais familiares (e.g., km/h, pés) e visualizassem os resultados também em unidades de sua escolha.
+*   **Decision:**
+    1.  **Backend Calculations in SI:** Todos os cálculos físicos dentro do `projectile_module.py` continuarão a ser realizados estritamente em unidades SI (metros para comprimento, segundos para tempo, m/s para velocidade). Isso garante a consistência e simplicidade da lógica de simulação principal.
+    2.  **API Accepts and Returns Specified Units:** A API (via modelos Pydantic em `models_projectile.py`) será modificada para:
+        *   Aceitar unidades opcionais para parâmetros de entrada (e.g., `initial_velocity_unit`, `initial_height_unit`). Se não fornecidas, assumem-se unidades SI padrão.
+        *   Aceitar um objeto `output_units` que especifica as unidades desejadas para os resultados da simulação (velocidade, tempo, alcance, altura).
+    3.  **Conversion at API Boundary:** A conversão de unidades de entrada para SI ocorrerá no início do método `run_simulation` em `projectile_module.py`. A conversão dos resultados de SI para as unidades de saída selecionadas ocorrerá no final deste método, antes de retornar os dados.
+    4.  **Centralized Conversion Logic:** Funções de conversão de unidades serão implementadas em um novo arquivo dedicado, `backend/simulations/physics/unit_conversion.py`.
+*   **Rationale:**
+    *   **Clean Core Logic:** Mantém a lógica de simulação física principal livre de complexidades de conversão de unidades, operando sempre em um sistema consistente (SI).
+    *   **User Flexibility:** Oferece uma experiência de usuário significativamente melhorada, permitindo o uso de unidades comuns.
+    *   **Centralized Conversion:** Agrupa toda a lógica de conversão de unidades em um local, facilitando a manutenção e a adição de novas unidades no futuro.
+    *   **Clear API Contract:** Os modelos Pydantic definem claramente quais unidades são suportadas.
+*   **Alternatives Considered:**
+    *   **Frontend Conversion Only:** O frontend seria responsável por todas as conversões de e para SI. Rejeitado porque o backend deve validar e entender as unidades de entrada para garantir a corretude da simulação (e.g., se um limite de parâmetro depende da unidade). Além disso, forçaria todos os clientes da API a reimplementar a lógica de conversão.
+    *   **Backend Stores and Calculates in Multiple Units:** A lógica de simulação lidaria internamente com múltiplas unidades. Rejeitado por aumentar drasticamente a complexidade da física principal e o risco de erros.
+
+## AD-002: Trajectory Point Generation Strategy (Projectile Module)
+
+*   **Status:** Decidido e Implementado
+*   **Context:**
+    *   A estratégia original de geração de pontos para a trajetória do projétil usava um `time_step` fixo (0.05s).
+    *   Isso poderia levar a um número muito pequeno de pontos para simulações de curta duração (resultando em gráficos "quadrados" ou pouco suaves) ou a um número excessivo de pontos para simulações de longa duração (impactando a performance de transferência de dados e renderização no frontend).
+*   **Decision:**
+    1.  Implementar uma estratégia de `time_step` adaptativo no `projectile_module.py`.
+    2.  **Minimum Points:** Se o tempo total de voo (`total_t`) dividido pelo `time_step` padrão (0.05s) resultar em menos que um número mínimo desejado de intervalos (definido como `min_desired_points = 20`), o `time_step` será recalculado como `total_t / min_desired_points` para garantir aproximadamente 20 intervalos (21 pontos).
+    3.  **Maximum Points:** Se o tempo total de voo (`total_t`) dividido pelo `time_step` (seja o padrão ou o ajustado pelo critério de pontos mínimos) resultar em mais que um limite máximo de intervalos (definido como `max_points_limit = 2000`), o `time_step` será recalculado como `total_t / max_points_limit` para garantir aproximadamente 2000 intervalos (2001 pontos).
+    4.  **Default Step:** Se nenhum dos critérios acima for atendido, o `time_step` padrão de 0.05s é utilizado.
+*   **Rationale:**
+    *   **Visual Consistency:** Garante uma experiência de visualização mais consistente, com curvas suaves para voos curtos.
+    *   **Frontend Performance:** Evita o envio e a tentativa de renderização de um número excessivo de pontos da trajetória para voos longos, o que poderia degradar a performance do frontend.
+    *   **Backend Control:** Mantém a lógica de geração de dados no backend, que tem pleno conhecimento da simulação.
+*   **Alternatives Considered:**
+    *   **Frontend Sampling/Interpolation:** O backend sempre envia um número fixo (grande) de pontos, e o frontend decide quais exibir ou como interpolar. Rejeitado por potencialmente enviar dados desnecessários e colocar mais carga no frontend.
+    *   **User-Defined Precision for Trajectory:** Permitir que o usuário escolha o número de pontos ou o `time_step`. Rejeitado por adicionar complexidade desnecessária à interface do usuário para este nível de funcionalidade; a adaptação automática foi preferida.

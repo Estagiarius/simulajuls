@@ -24,7 +24,16 @@ Atualmente, as seguintes simulações estão implementadas:
 
 2.  **Física: Lançamento Oblíquo**
     *   Defina a velocidade inicial, ângulo de lançamento, altura inicial (opcional) e gravidade (opcional) de um projétil.
-    *   Visualize a trajetória, alcance máximo, altura máxima e tempo total de voo.
+    *   **Unidades de Entrada:**
+        *   Velocidade Inicial: Pode ser fornecida em "m/s" (padrão), "km/h", "ft/s", ou "mph".
+        *   Altura Inicial: Pode ser fornecida em "m" (padrão) ou "ft".
+        *   Gravidade: Assume-se que está em m/s² para cálculos internos.
+    *   **Unidades de Saída:** Os resultados da simulação (velocidade inicial x/y, tempo total, alcance máximo, altura máxima) podem ser exibidos nas seguintes unidades, conforme selecionado pelo usuário (padrão para m/s, s, m, m):
+        *   Velocidade: "m/s", "km/h", "ft/s", "mph"
+        *   Tempo: "s", "min"
+        *   Distância (alcance/altura): "m", "km", "ft", "mi"
+    *   **Geração de Trajetória:** A geração de pontos da trajetória é adaptativa para garantir uma visualização suave para lançamentos curtos e para evitar um número excessivo de pontos para lançamentos longos.
+    *   Visualize a trajetória, alcance máximo, altura máxima e tempo total de voo, com unidades selecionadas.
     *   Acesse em: `http://localhost:5173/experiments/physics/projectile-launch`
 
 3.  **Biologia: Genética Mendeliana (Cruzamento Monoíbrido)**
