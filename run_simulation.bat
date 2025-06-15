@@ -50,28 +50,51 @@ set NPM_ERRORLEVEL=%errorlevel%
 
 echo Captured errorlevel from 'cmd /c npm --version': %NPM_ERRORLEVEL%
 
+echo DBG: Line After Captured Errorlevel Echo
+echo DBG: About to check NPM_ERRORLEVEL value which is '%NPM_ERRORLEVEL%'
+
 if %NPM_ERRORLEVEL% neq 0 (
+    echo DBG: NPM_ERRORLEVEL is NOT 0. Entering error block.
     echo.
     echo Error: 'npm --version' command failed when run in a subshell (errorlevel %NPM_ERRORLEVEL%).
-    echo Output/Error from npm (if any) might be in %NPM_VERSION_TMP_FILE%
+    echo Output/Error from npm (if any) might be in "%NPM_VERSION_TMP_FILE%"
     echo Please ensure Node.js and npm are correctly installed and accessible.
     echo You can try running 'npm --version' manually in a new command prompt to diagnose.
     echo.
+    if exist "%NPM_VERSION_TMP_FILE%" (
+        echo DBG: Displaying temp file content before pausing in error block.
+        type "%NPM_VERSION_TMP_FILE%"
+        del "%NPM_VERSION_TMP_FILE%"
+    )
     pause
     exit /b 1
+) else (
+    echo DBG: NPM_ERRORLEVEL IS 0. Entering success block.
 )
 
+echo DBG: Successfully passed NPM_ERRORLEVEL check.
 echo 'npm --version' command executed via subshell successfully (errorlevel %NPM_ERRORLEVEL%).
-REM Optionally, display the version from the temp file
+
+echo DBG: About to check if temp file "%NPM_VERSION_TMP_FILE%" exists.
 if exist "%NPM_VERSION_TMP_FILE%" (
+    echo DBG: Temp file "%NPM_VERSION_TMP_FILE%" exists.
     echo Content of npm version output file ("%NPM_VERSION_TMP_FILE%"):
     type "%NPM_VERSION_TMP_FILE%"
+    echo DBG: About to delete temp file "%NPM_VERSION_TMP_FILE%".
     del "%NPM_VERSION_TMP_FILE%"
+    if errorlevel 1 (
+        echo DBG: Error deleting temp file.
+    ) else (
+        echo DBG: Temp file deleted successfully.
+    )
     echo Successfully processed and deleted temporary npm version file.
     echo.
 ) else (
+    echo DBG: Temp file "%NPM_VERSION_TMP_FILE%" does NOT exist or was already deleted.
     echo Warning: npm version output file ("%NPM_VERSION_TMP_FILE%") was not created or already deleted.
 )
+
+echo DBG: After temp file processing.
 echo npm found.
 echo.
 
