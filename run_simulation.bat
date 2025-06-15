@@ -63,13 +63,14 @@ if %NPM_ERRORLEVEL% neq 0 (
 
 echo 'npm --version' command executed via subshell successfully (errorlevel %NPM_ERRORLEVEL%).
 REM Optionally, display the version from the temp file
-if exist %NPM_VERSION_TMP_FILE% (
-    echo Content of npm version output file (%NPM_VERSION_TMP_FILE%):
-    type %NPM_VERSION_TMP_FILE%
-    del %NPM_VERSION_TMP_FILE%
+if exist "%NPM_VERSION_TMP_FILE%" (
+    echo Content of npm version output file ("%NPM_VERSION_TMP_FILE%"):
+    type "%NPM_VERSION_TMP_FILE%"
+    del "%NPM_VERSION_TMP_FILE%"
+    echo Successfully processed and deleted temporary npm version file.
     echo.
 ) else (
-    echo Warning: npm version output file (%NPM_VERSION_TMP_FILE%) was not created.
+    echo Warning: npm version output file ("%NPM_VERSION_TMP_FILE%") was not created or already deleted.
 )
 echo npm found.
 echo.
