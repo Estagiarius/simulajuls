@@ -61,7 +61,7 @@ class MendelianCrossResult(BaseSimulationResult):
     punnett_square: List[List[str]]
     offspring_genotypes: List[GenotypeProportion]
     offspring_phenotypes: List[PhenotypeProportion]
-    parameters_used: MendelianCrossParams # type: ignore[assignment]
+    parameters_used: Dict[str, Any]
     # As per BaseSimulationResult, parameters_used is Dict[str, Any].
     # Pydantic v2 handles the assignment of a model instance by calling model_dump() if needed.
     # If strict typing without Pydantic's implicit conversion is required, this could be:
