@@ -1,6 +1,20 @@
 <script>
   import { fade } from 'svelte/transition';
 
+  // Unit selection constants
+  const VELOCITY_UNITS = [{ value: 'm/s', label: 'm/s' }, { value: 'km/h', label: 'km/h' }, { value: 'ft/s', label: 'ft/s' }, { value: 'mph', label: 'mph' }];
+  const HEIGHT_UNITS = [{ value: 'm', label: 'm' }, { value: 'ft', label: 'ft' }];
+  const DISTANCE_OUTPUT_UNITS = [{ value: 'm', label: 'm' }, { value: 'km', label: 'km' }, { value: 'ft', label: 'ft' }, { value: 'mi', label: 'mi' }];
+  const VELOCITY_OUTPUT_UNITS = [{ value: 'm/s', label: 'm/s' }, { value: 'km/h', label: 'km/h' }, { value: 'ft/s', label: 'ft/s' }, { value: 'mph', label: 'mph' }];
+  const TIME_OUTPUT_UNITS = [{ value: 's', label: 's' }, { value: 'min', label: 'min' }];
+
+  // Selected unit state variables
+  let initialVelocityUnit = 'm/s';
+  let initialHeightUnit = 'm';
+  let outputDistanceUnit = 'm';
+  let outputVelocityUnit = 'm/s';
+  let outputTimeUnit = 's';
+
   const experimentDetails = {
     name: "Lançamento Oblíquo",
     description: "Simule o lançamento de um projétil, definindo velocidade inicial, ângulo e outros parâmetros. Observe a trajetória, alcance e altura máxima."
@@ -27,7 +41,14 @@
       initial_velocity: parseFloat(params.initial_velocity),
       launch_angle: parseFloat(params.launch_angle),
       initial_height: parseFloat(params.initial_height),
-      gravity: parseFloat(params.gravity)
+      gravity: parseFloat(params.gravity),
+      initial_velocity_unit: initialVelocityUnit,
+      initial_height_unit: initialHeightUnit,
+      output_units: {
+        distance: outputDistanceUnit,
+        velocity: outputVelocityUnit,
+        time: outputTimeUnit
+      }
     };
 
     console.log("Enviando para API Lançamento Oblíquo:", payload);
@@ -166,8 +187,13 @@
     <div class="form-grid">
       <fieldset>
         <legend>Parâmetros Principais</legend>
-        <label for="initial_velocity">Velocidade Inicial (m/s):</label>
+        <label for="initial_velocity">Velocidade Inicial ({initialVelocityUnit}):</label>
         <input type="number" id="initial_velocity" bind:value={params.initial_velocity} min="0.1" step="0.1" required>
+        <select bind:value={initialVelocityUnit} class="unit-select">
+          {#each VELOCITY_UNITS as unit (unit.value)}
+            <option value={unit.value}>{unit.label}</option>
+          {/each}
+        </select>
 
         <label for="launch_angle">Ângulo de Lançamento (graus):</label>
         <input type="number" id="launch_angle" bind:value={params.launch_angle} min="1" max="89" step="1" required>
@@ -176,13 +202,48 @@
 
       <fieldset>
         <legend>Parâmetros Adicionais (Opcionais)</legend>
-        <label for="initial_height">Altura Inicial (m):</label>
+        <label for="initial_height">Altura Inicial ({initialHeightUnit}):</label>
         <input type="number" id="initial_height" bind:value={params.initial_height} min="0" step="0.1">
+        <select bind:value={initialHeightUnit} class="unit-select">
+          {#each HEIGHT_UNITS as unit (unit.value)}
+            <option value={unit.value}>{unit.label}</option>
+          {/each}
+        </select>
 
         <label for="gravity">Aceleração da Gravidade (m/s²):</label>
         <input type="number" id="gravity" bind:value={params.gravity} min="0.1" step="0.01">
       </fieldset>
     </div>
+
+    <fieldset>
+      <legend>Unidades de Saída para Resultados</legend>
+      <div class="form-grid">
+        <div>
+          <label for="output_distance_unit">Unidade para Distâncias (Resultados):</label>
+          <select id="output_distance_unit" bind:value={outputDistanceUnit} class="unit-select">
+            {#each DISTANCE_OUTPUT_UNITS as unit (unit.value)}
+              <option value={unit.value}>{unit.label}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <label for="output_velocity_unit">Unidade para Velocidades (Resultados):</label>
+          <select id="output_velocity_unit" bind:value={outputVelocityUnit} class="unit-select">
+            {#each VELOCITY_OUTPUT_UNITS as unit (unit.value)}
+              <option value={unit.value}>{unit.label}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <label for="output_time_unit">Unidade para Tempo (Resultados):</label>
+          <select id="output_time_unit" bind:value={outputTimeUnit} class="unit-select">
+            {#each TIME_OUTPUT_UNITS as unit (unit.value)}
+              <option value={unit.value}>{unit.label}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
+    </fieldset>
 
     <button type="submit" class="submit-button" disabled={isLoading}>
       {#if isLoading}
@@ -198,19 +259,19 @@
       <h2>Resultados do Lançamento</h2>
       <div class="results-summary-grid">
         <div class="result-item">
-          <strong>Alcance Máximo:</strong> {simulationResult.max_range.toFixed(2)} m
+          <strong>Alcance Máximo:</strong> {simulationResult.max_range.toFixed(2)} {simulationResult.units_used.distance}
         </div>
         <div class="result-item">
-          <strong>Altura Máxima:</strong> {simulationResult.max_height.toFixed(2)} m
+          <strong>Altura Máxima:</strong> {simulationResult.max_height.toFixed(2)} {simulationResult.units_used.distance}
         </div>
         <div class="result-item">
-          <strong>Tempo Total de Voo:</strong> {simulationResult.total_time.toFixed(2)} s
+          <strong>Tempo Total de Voo:</strong> {simulationResult.total_time.toFixed(2)} {simulationResult.units_used.time}
         </div>
         <div class="result-item">
-          <strong>Velocidade Inicial X:</strong> {simulationResult.initial_velocity_x.toFixed(2)} m/s
+          <strong>Velocidade Inicial X:</strong> {simulationResult.initial_velocity_x.toFixed(2)} {simulationResult.units_used.velocity}
         </div>
         <div class="result-item">
-          <strong>Velocidade Inicial Y:</strong> {simulationResult.initial_velocity_y.toFixed(2)} m/s
+          <strong>Velocidade Inicial Y:</strong> {simulationResult.initial_velocity_y.toFixed(2)} {simulationResult.units_used.velocity}
         </div>
       </div>
 
@@ -259,7 +320,11 @@
       <div class="trajectory-table-container">
         <table>
           <thead>
-            <tr><th>Tempo (s)</th><th>X (m)</th><th>Y (m)</th></tr>
+            <tr>
+              <th>Tempo ({simulationResult.units_used.time})</th>
+              <th>X ({simulationResult.units_used.distance})</th>
+              <th>Y ({simulationResult.units_used.distance})</th>
+            </tr>
           </thead>
           <tbody>
             {#each getTrajectorySample(simulationResult.trajectory) as point}
@@ -313,6 +378,17 @@
   input[type="number"] {
     width: 100%; padding: 10px; margin-bottom: 5px;
     border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em;
+  }
+  .unit-select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 2px; /* Espaço entre o input e o select */
+    margin-bottom: 10px; /* Espaço antes do próximo label */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.95em;
+    background-color: #fff;
   }
   input[type="number"]:focus {
     border-color: #2980b9; outline: none; box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
