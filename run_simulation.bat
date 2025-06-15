@@ -41,16 +41,18 @@ echo --- Checking for npm ---
 echo Attempting to run 'npm --version'. Please wait...
 echo If the script hangs here, there might be an issue with your npm installation or PATH.
 npm --version
-if errorlevel 1 (
+set NPM_ERRORLEVEL=%errorlevel%
+echo Captured errorlevel from 'npm --version': %NPM_ERRORLEVEL%
+if %NPM_ERRORLEVEL% neq 0 (
     echo.
-    echo Error: 'npm --version' command failed or npm is not installed/found in PATH.
+    echo Error: 'npm --version' command failed (errorlevel %NPM_ERRORLEVEL%) or npm is not installed/found in PATH.
     echo Please ensure Node.js and npm are correctly installed and accessible.
     echo You can try running 'npm --version' manually in a new command prompt to diagnose.
     echo.
     pause
     exit /b 1
 )
-echo 'npm --version' command successful. npm found.
+echo 'npm --version' command successful (errorlevel %NPM_ERRORLEVEL%). npm found.
 echo.
 
 echo --- Backend Setup ---
