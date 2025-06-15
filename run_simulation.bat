@@ -46,13 +46,15 @@ set NPM_VERSION_TMP_FILE=%TEMP%\npm_version_output.txt
 
 REM Run npm --version in a subshell and redirect its output
 cmd /c "npm --version > %NPM_VERSION_TMP_FILE% 2>&1"
-for /f "tokens=*" %%a in ("%errorlevel%") do set NPM_ERRORLEVEL=%%a
+set NPM_CMD_EXIT_CODE=0
+for /f "tokens=*" %%a in ("%errorlevel%") do set NPM_CMD_EXIT_CODE=%%a
 
-echo Captured errorlevel from 'cmd /c npm --version': [%NPM_ERRORLEVEL%]
+echo Captured errorlevel from 'cmd /c npm --version': [%NPM_CMD_EXIT_CODE%]
 
-if "%NPM_ERRORLEVEL%" neq "0" (
+IF ERRORLEVEL 1 (
     echo.
-    echo Error: 'npm --version' command failed when run in a subshell (errorlevel %NPM_ERRORLEVEL%).
+    echo Error: 'npm --version' command failed (batch detected errorlevel 1 or higher).
+    echo Specific exit code from npm command: [%NPM_CMD_EXIT_CODE%]
     echo Output/Error from npm (if any) might be in "%NPM_VERSION_TMP_FILE%"
     echo Please ensure Node.js and npm are correctly installed and accessible.
     echo You can try running 'npm --version' manually in a new command prompt to diagnose.
@@ -66,7 +68,10 @@ if "%NPM_ERRORLEVEL%" neq "0" (
     exit /b 1
 )
 
-echo 'npm --version' command executed successfully (errorlevel %NPM_ERRORLEVEL%).
+REM If we reach here, errorlevel was 0.
+echo 'npm --version' command executed successfully (batch detected errorlevel 0).
+echo Specific exit code from npm command: [%NPM_CMD_EXIT_CODE%]
+
 if exist "%NPM_VERSION_TMP_FILE%" (
     echo Content of npm version output file ("%NPM_VERSION_TMP_FILE%"):
     type "%NPM_VERSION_TMP_FILE%"
