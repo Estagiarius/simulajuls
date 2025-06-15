@@ -50,7 +50,7 @@
     const recAllele = params.recessive_allele || 'a';
     // Ensure allowedChars uses the actual allele characters for the regex, case-insensitively
     const allowedChars = `${domAllele}${recAllele}`;
-    // Regex to match exactly two characters, case-insensitive, from the allowed set
+    // Regex to match exactly two characters from the allowed alleles (case-insensitive).
     const regex = new RegExp(`^[${allowedChars.toUpperCase()}${allowedChars.toLowerCase()}]{2}$`);
 
     if (!regex.test(trimmedGenotype)) {
