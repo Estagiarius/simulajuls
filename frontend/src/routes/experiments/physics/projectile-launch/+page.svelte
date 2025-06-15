@@ -255,24 +255,24 @@
   </form>
 
   {#if simulationResult}
-    {#if simulationResult.units_used && simulationResult.parameters_used && simulationResult.trajectory && simulationResult.trajectory.length > 0}
+    {#if simulationResult.max_range_unit && simulationResult.max_height_unit && simulationResult.total_time_unit && simulationResult.initial_velocity_x_unit && simulationResult.initial_velocity_y_unit && simulationResult.parameters_used && simulationResult.trajectory && simulationResult.trajectory.length > 0}
     <section class="results-section" transition:fade={{ duration: 300 }}>
       <h2>Resultados do Lançamento</h2>
       <div class="results-summary-grid">
         <div class="result-item">
-          <strong>Alcance Máximo:</strong> {simulationResult.max_range.toFixed(2)} {simulationResult.units_used.distance}
+          <strong>Alcance Máximo:</strong> {simulationResult.max_range.toFixed(2)} {simulationResult.max_range_unit}
         </div>
         <div class="result-item">
-          <strong>Altura Máxima:</strong> {simulationResult.max_height.toFixed(2)} {simulationResult.units_used.distance}
+          <strong>Altura Máxima:</strong> {simulationResult.max_height.toFixed(2)} {simulationResult.max_height_unit}
         </div>
         <div class="result-item">
-          <strong>Tempo Total de Voo:</strong> {simulationResult.total_time.toFixed(2)} {simulationResult.units_used.time}
+          <strong>Tempo Total de Voo:</strong> {simulationResult.total_time.toFixed(2)} {simulationResult.total_time_unit}
         </div>
         <div class="result-item">
-          <strong>Velocidade Inicial X:</strong> {simulationResult.initial_velocity_x.toFixed(2)} {simulationResult.units_used.velocity}
+          <strong>Velocidade Inicial X:</strong> {simulationResult.initial_velocity_x.toFixed(2)} {simulationResult.initial_velocity_x_unit}
         </div>
         <div class="result-item">
-          <strong>Velocidade Inicial Y:</strong> {simulationResult.initial_velocity_y.toFixed(2)} {simulationResult.units_used.velocity}
+          <strong>Velocidade Inicial Y:</strong> {simulationResult.initial_velocity_y.toFixed(2)} {simulationResult.initial_velocity_y_unit}
         </div>
       </div>
 
@@ -322,9 +322,9 @@
         <table>
           <thead>
             <tr>
-              <th>Tempo ({simulationResult.units_used.time})</th>
-              <th>X ({simulationResult.units_used.distance})</th>
-              <th>Y ({simulationResult.units_used.distance})</th>
+              <th>Tempo ({simulationResult.total_time_unit})</th>
+              <th>X ({simulationResult.max_range_unit})</th>
+              <th>Y ({simulationResult.max_range_unit})</th>
             </tr>
           </thead>
           <tbody>
@@ -343,7 +343,7 @@
     <section class="results-section" transition:fade={{ duration: 300 }}>
       <h2>Resultados da Simulação (Dados Incompletos)</h2>
       <p class="error-message">
-        Os resultados da simulação foram recebidos, mas alguns dados necessários para a exibição completa estão ausentes (ex: `units_used`, `parameters_used` ou `trajectory`).
+        Os resultados da simulação foram recebidos, mas alguns dados necessários para a exibição completa estão ausentes (ex: unidades específicas como `max_range_unit`, `parameters_used` ou `trajectory`).
       </p>
       <p><strong>Dados recebidos:</strong></p>
       <pre class="raw-json-output">{JSON.stringify(simulationResult, null, 2)}</pre>
@@ -352,13 +352,13 @@
       <h4>Sumário Básico (se disponível):</h4>
       <ul>
         {#if simulationResult.max_range !== undefined}
-          <li>Alcance Máximo: {simulationResult.max_range.toFixed(2)} {simulationResult.units_used ? simulationResult.units_used.distance : ''}</li>
+          <li>Alcance Máximo: {simulationResult.max_range.toFixed(2)} {simulationResult.max_range_unit || ''}</li>
         {/if}
         {#if simulationResult.max_height !== undefined}
-          <li>Altura Máxima: {simulationResult.max_height.toFixed(2)} {simulationResult.units_used ? simulationResult.units_used.distance : ''}</li>
+          <li>Altura Máxima: {simulationResult.max_height.toFixed(2)} {simulationResult.max_height_unit || ''}</li>
         {/if}
         {#if simulationResult.total_time !== undefined}
-          <li>Tempo Total de Voo: {simulationResult.total_time.toFixed(2)} {simulationResult.units_used ? simulationResult.units_used.time : ''}</li>
+          <li>Tempo Total de Voo: {simulationResult.total_time.toFixed(2)} {simulationResult.total_time_unit || ''}</li>
         {/if}
       </ul>
     </section>
