@@ -5,7 +5,6 @@ set -e
 
 # Backend setup and launch
 echo "Starting backend setup..."
-cd backend
 
 # Check if venv exists, if not create it
 if [ ! -d "venv" ]; then
@@ -20,12 +19,9 @@ pip install fastapi uvicorn pydantic
 
 # Launch backend server
 echo "Launching backend server..."
-python -m uvicorn main:app --reload --port 8000 &
+python -m uvicorn backend.main:app --reload --port 8000 &
 echo "Backend server started in background. Attempting to access at http://localhost:8000"
 sleep 5
-
-# Navigate back to project root
-cd ..
 
 # --- NVM Setup ---
 echo "Setting up NVM and Node.js..."
