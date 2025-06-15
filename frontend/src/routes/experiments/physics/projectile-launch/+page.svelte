@@ -231,7 +231,7 @@
                   stroke="#aaa" stroke-width="1"/>
             <line x1="{svgAdjustedX(0, simulationResult.trajectory)}" y1="0"
                   x2="{svgAdjustedX(0, simulationResult.trajectory)}"
-                  y2="{svgAdjustedY(simulationResult.max_height, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height) + 20}"  /* +20 para dar espaço */
+                  y2="{svgAdjustedY(simulationResult.max_height, simulationResult.trajectory, simulationResult.max_height, simulationResult.parameters_used.initial_height) + 20}"
                   stroke="#aaa" stroke-width="1"/>
 
             <!-- Trajetória -->

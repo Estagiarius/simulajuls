@@ -23,14 +23,41 @@
   $: parent2GenotypeError = validateGenotypeInput(params.parent2_genotype);
 
   function validateGenotypeInput(genotype) {
-    if (!genotype) return "Genótipo não pode ser vazio.";
-    if (genotype.length !== 2) return "Genótipo deve ter 2 alelos (ex: AA, Aa, aa).";
-    // Validação de caracteres pode ser mais robusta se os alelos forem fixos
-    const allowedChars = (params.dominant_allele || 'A') + (params.recessive_allele || 'a');
+    // 1. Handle null or undefined genotype
+    if (genotype === null || genotype === undefined) {
+      return "Genótipo não pode ser vazio.";
+    }
+
+    // 2. Trim the genotype
+    const trimmedGenotype = genotype.trim();
+
+    // 3. Check if trimmedGenotype is empty
+    if (trimmedGenotype.length === 0) {
+      if (genotype.length > 0) {
+        return "Genótipo não pode ser composto apenas por espaços.";
+      } else {
+        return "Genótipo não pode ser vazio.";
+      }
+    }
+
+    // 4. Check if trimmedGenotype length is not 2
+    if (trimmedGenotype.length !== 2) {
+      return `Genótipo "${trimmedGenotype}" deve ter exatamente 2 alelos (ex: AA, Aa, aa). Por favor, insira duas letras.`;
+    }
+
+    // 5. Validate allowed characters using regex
+    const domAllele = params.dominant_allele || 'A';
+    const recAllele = params.recessive_allele || 'a';
+    // Ensure allowedChars uses the actual allele characters for the regex, case-insensitively
+    const allowedChars = `${domAllele}${recAllele}`;
+    // Regex to match exactly two characters, case-insensitive, from the allowed set
     const regex = new RegExp(`^[${allowedChars.toUpperCase()}${allowedChars.toLowerCase()}]{2}$`);
-    if (!regex.test(genotype)) {
-        // return `Genótipo contém alelos inválidos. Use apenas '${params.dominant_allele}' ou '${params.recessive_allele}'.`;
-    } // A validação principal de alelos é no backend.
+
+    if (!regex.test(trimmedGenotype)) {
+      return `Genótipo "${trimmedGenotype}" contém alelos inválidos. Use apenas '${domAllele}' e '${recAllele}'.`;
+    }
+
+    // 6. If all checks pass
     return "";
   }
 
