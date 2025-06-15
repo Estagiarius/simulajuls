@@ -57,7 +57,7 @@ A `run_simulation.bat` script is provided to automate the setup and launch on Wi
 ```batch
 .\run_simulation.bat
 ```
-This will open two new windows: one for the backend server and one for the frontend server. The frontend server window will remain open and display output from the development server (Vite). You can monitor this window for any frontend-specific messages or errors. Closing this frontend server window will stop the frontend application.
+The script will guide you through the process and open separate command prompt windows for the backend and frontend servers. Please monitor these new windows for server output and any error messages. The main script window will provide overall progress; closing it will not stop the individual server windows.
 
 **Note:** The `run_simulation.sh` script is primarily intended for Linux/macOS environments. For Windows, please use the `run_simulation.bat` script. Alternatively, users on any platform can follow the manual steps outlined in the "Como Executar o Projeto Localmente" section. The script will:
 1.  Set up and start the Python backend server.
