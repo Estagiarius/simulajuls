@@ -50,41 +50,13 @@ for /f "tokens=*" %%a in ("%errorlevel%") do set NPM_CMD_EXIT_CODE=%%a
 
 echo Captured errorlevel from 'cmd /c npm --version': [%NPM_CMD_EXIT_CODE%]
 
-echo DBG: Buffer command - testing if this line executes before IF ERRORLEVEL.
+echo DBG: About to CALL :ProcessNpmResult with [%NPM_CMD_EXIT_CODE%]
+CALL :ProcessNpmResult %NPM_CMD_EXIT_CODE%
 
-IF ERRORLEVEL 1 (
-    echo.
-    echo Error: 'npm --version' command failed (batch detected errorlevel 1 or higher).
-    echo Specific exit code from npm command: [%NPM_CMD_EXIT_CODE%]
-    echo Output/Error from npm (if any) might be in "%NPM_VERSION_TMP_FILE%"
-    echo Please ensure Node.js and npm are correctly installed and accessible.
-    echo You can try running 'npm --version' manually in a new command prompt to diagnose.
-    echo.
-    if exist "%NPM_VERSION_TMP_FILE%" (
-        echo Contents of "%NPM_VERSION_TMP_FILE%":
-        type "%NPM_VERSION_TMP_FILE%"
-        del "%NPM_VERSION_TMP_FILE%"
-    )
-    pause
-    exit /b 1
-)
+echo DBG: Returned from :ProcessNpmResult. Assuming success and jumping to NpmCheckSuccess.
+GOTO NpmCheckSuccess
 
-REM If we reach here, errorlevel was 0.
-echo 'npm --version' command executed successfully (batch detected errorlevel 0).
-echo Specific exit code from npm command: [%NPM_CMD_EXIT_CODE%]
-
-if exist "%NPM_VERSION_TMP_FILE%" (
-    echo Content of npm version output file ("%NPM_VERSION_TMP_FILE%"):
-    type "%NPM_VERSION_TMP_FILE%"
-    del "%NPM_VERSION_TMP_FILE%"
-    echo Successfully processed and deleted temporary npm version file.
-    echo.
-) else (
-    echo Warning: npm version output file ("%NPM_VERSION_TMP_FILE%") was not created or already deleted.
-)
-echo npm found.
-echo.
-
+:ContinueAfterNpmCheck
 echo --- Backend Setup ---
 echo.
 
@@ -162,3 +134,52 @@ echo Press any key to close this main script window.
 echo Note: Closing this window will NOT stop the backend or frontend servers.
 echo You must close their respective windows to stop them.
 pause
+GOTO :EOF
+
+REM --- SUBROUTINES START HERE ---
+:ProcessNpmResult
+echo DBG: Inside :ProcessNpmResult, received argument: [%1]
+IF "%1" NEQ "0" (
+    echo DBG: :ProcessNpmResult - Detected error (argument (%1) was not "0").
+    GOTO NpmError
+)
+echo DBG: :ProcessNpmResult - No error detected (argument (%1) was "0").
+EXIT /B 0
+
+:NpmError
+echo.
+echo Error: 'npm --version' command failed.
+echo The specific exit code captured was: [%NPM_CMD_EXIT_CODE%]
+echo Output/Error from npm (if any) should be in "%NPM_VERSION_TMP_FILE%"
+echo Please ensure Node.js and npm are correctly installed and accessible.
+echo You can try running 'npm --version' manually in a new command prompt to diagnose.
+echo.
+if exist "%NPM_VERSION_TMP_FILE%" (
+    echo Contents of "%NPM_VERSION_TMP_FILE%":
+    type "%NPM_VERSION_TMP_FILE%"
+    echo Deleting temp file "%NPM_VERSION_TMP_FILE%"
+    del "%NPM_VERSION_TMP_FILE%"
+)
+pause
+echo Script will now terminate due to npm check failure.
+EXIT /B 1
+
+:NpmCheckSuccess
+echo DBG: Reached NpmCheckSuccess label.
+echo 'npm --version' command executed successfully.
+echo Specific exit code from npm command: [%NPM_CMD_EXIT_CODE%]
+if exist "%NPM_VERSION_TMP_FILE%" (
+    echo Content of npm version output file ("%NPM_VERSION_TMP_FILE%"):
+    type "%NPM_VERSION_TMP_FILE%"
+    echo Deleting temp file "%NPM_VERSION_TMP_FILE%"
+    del "%NPM_VERSION_TMP_FILE%"
+    echo Successfully processed and deleted temporary npm version file.
+    echo.
+) else (
+    echo Warning: npm version output file ("%NPM_VERSION_TMP_FILE%") was not created or already deleted.
+)
+echo npm found.
+echo.
+REM This GOTO allows the main script flow to continue from where Npm check was initiated.
+GOTO :ContinueAfterNpmCheck
+REM --- SUBROUTINES END HERE ---
