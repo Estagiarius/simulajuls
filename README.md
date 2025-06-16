@@ -41,6 +41,13 @@ Atualmente, as seguintes simulações estão implementadas:
     *   Observe o Quadro de Punnett resultante e as proporções genotípicas e fenotípicas da prole.
     *   Acesse em: `http://localhost:5173/experiments/biology/mendelian-genetics`
 
+4.  **Química: Curva de Titulação Ácido-Base**
+    *   Simula uma curva de titulação ácido-base, permitindo configurar um analito (ácido/base, forte/fraco com Ka/Kb) e um titulante (ácido/base forte).
+    *   Permite definir concentrações, volumes, e o intervalo de adição do titulante.
+    *   Visualiza a variação do pH em função do volume de titulante adicionado através de um gráfico SVG.
+    *   Mostra os parâmetros utilizados na simulação e mensagens do backend.
+    *   Acesse em: `http://localhost:5173/experiments/chemistry/acid-base-titration`
+
 ## Automated Execution (Recommended)
 
 The `run_simulation.sh` script automates the setup and launch of both the backend and frontend components of the simulator. This is the recommended way to start the application.
