@@ -50,11 +50,14 @@ for /f "tokens=*" %%a in ("%errorlevel%") do set NPM_CMD_EXIT_CODE=%%a
 
 echo Captured errorlevel from 'cmd /c npm --version': [%NPM_CMD_EXIT_CODE%]
 
-echo DBG: About to CALL :ProcessNpmResult with [%NPM_CMD_EXIT_CODE%]
-CALL :ProcessNpmResult %NPM_CMD_EXIT_CODE%
-
-echo DBG: Returned from :ProcessNpmResult. Assuming success and jumping to NpmCheckSuccess.
-GOTO NpmCheckSuccess
+echo DBG: About to check if NPM_CMD_EXIT_CODE is "0" using IF ==
+IF "%NPM_CMD_EXIT_CODE%" == "0" (
+    echo DBG: Condition "%NPM_CMD_EXIT_CODE%" == "0" is TRUE.
+    GOTO NpmCheckSuccess
+) ELSE (
+    echo DBG: Condition "%NPM_CMD_EXIT_CODE%" == "0" is FALSE.
+    GOTO NpmError
+)
 
 :ContinueAfterNpmCheck
 echo --- Backend Setup ---
@@ -136,16 +139,7 @@ echo You must close their respective windows to stop them.
 pause
 GOTO :EOF
 
-REM --- SUBROUTINES START HERE ---
-:ProcessNpmResult
-echo DBG: Inside :ProcessNpmResult, received argument: [%1]
-IF "%1" NEQ "0" (
-    echo DBG: :ProcessNpmResult - Detected error (argument (%1) was not "0").
-    GOTO NpmError
-)
-echo DBG: :ProcessNpmResult - No error detected (argument (%1) was "0").
-EXIT /B 0
-
+REM --- LABELS FOR NPM CHECK START HERE ---
 :NpmError
 echo.
 echo Error: 'npm --version' command failed.
@@ -182,4 +176,4 @@ echo npm found.
 echo.
 REM This GOTO allows the main script flow to continue from where Npm check was initiated.
 GOTO :ContinueAfterNpmCheck
-REM --- SUBROUTINES END HERE ---
+REM --- LABELS FOR NPM CHECK END HERE ---
