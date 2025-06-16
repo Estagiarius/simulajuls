@@ -162,16 +162,14 @@ EXIT /B 1
 echo DBG: Reached NpmCheckSuccess label.
 echo 'npm --version' command executed successfully.
 echo Specific exit code from npm command: [%NPM_CMD_EXIT_CODE%]
-if exist "%NPM_VERSION_TMP_FILE%" (
-    echo Content of npm version output file ("%NPM_VERSION_TMP_FILE%"):
-    type "%NPM_VERSION_TMP_FILE%"
-    echo Deleting temp file "%NPM_VERSION_TMP_FILE%"
-    del "%NPM_VERSION_TMP_FILE%"
-    echo Successfully processed and deleted temporary npm version file.
-    echo.
-) else (
-    echo Warning: npm version output file ("%NPM_VERSION_TMP_FILE%") was not created or already deleted.
-)
+
+echo Attempting to display and delete the npm version temporary file ("%NPM_VERSION_TMP_FILE%")...
+echo Contents (if file exists):
+type "%NPM_VERSION_TMP_FILE%" 2>nul
+echo Attempting to delete temp file...
+del "%NPM_VERSION_TMP_FILE%" 2>nul
+echo Temporary file processing attempted.
+
 echo npm found.
 echo.
 REM This GOTO allows the main script flow to continue from where Npm check was initiated.
