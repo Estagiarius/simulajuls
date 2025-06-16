@@ -104,10 +104,20 @@ Para executar e testar a aplicação:
     *   Implementar criptografia (ex: usando a biblioteca `cryptography`) para proteger esses dados. Isso envolverá a modificação dos endpoints de salvar e carregar para criptografar/descriptografar os dados. Gerenciamento seguro de chaves será essencial.
 
 *   **Desenvolvimento do Frontend:**
-    *   A API backend está pronta para ser consumida. O próximo grande passo é desenvolver a interface do usuário (frontend React/Svelte conforme planejado) que interaja com esta API.
+    *   A API backend está pronta para ser consumida. Interfaces de usuário (frontend Svelte) foram desenvolvidas para interagir com esta API.
+    *   **Experimentos com Frontend Implementado:**
+        *   **Reação Ácido-Base Simples:** `frontend/src/routes/experiments/chemistry/acid-base/+page.svelte`
+        *   **Lançamento Oblíquo:** `frontend/src/routes/experiments/physics/projectile-launch/+page.svelte` (com funcionalidades avançadas de unidades e plotagem SVG da trajetória).
+        *   **Genética Mendeliana:** `frontend/src/routes/experiments/biology/mendelian-genetics/+page.svelte`
+        *   **Curva de Titulação Ácido-Base:**
+            *   Localização: `frontend/src/routes/experiments/chemistry/acid-base-titration/+page.svelte`.
+            *   Descrição: Permite aos usuários configurar um analito (ácido ou base, especificando concentração, volume, e opcionalmente Ka/Kb para espécies fracas) e um titulante (ácido ou base forte, com nome, concentração). Os usuários também definem o processo de titulação (volume inicial, volume final e incremento de volume do titulante).
+            *   Funcionalidades: A interface envia esses parâmetros para o endpoint backend `/api/simulation/acid-base-titration/start`. Exibe a curva de titulação (pH vs. volume de titulante) resultante usando um gráfico SVG customizado. Também apresenta uma mensagem de status da simulação e um resumo dos parâmetros utilizados.
+            *   Backend Consumido: Utiliza o módulo de simulação `acid_base_titration_module.py` existente no backend.
+    *   O desenvolvimento de interfaces para outros módulos de simulação ou novas simulações pode seguir o padrão estabelecido.
 
 *   **Novos Experimentos:**
-    *   Adicionar mais simulações seguindo o padrão `SimulationModule`:
+    *   Adicionar mais simulações seguindo o padrão `SimulationModule` no backend:
         1.  Crie uma nova subpasta em `backend/simulations/<categoria>/`.
         2.  Defina `models_<experimento>.py` com os modelos Pydantic para parâmetros e resultados.
         3.  Implemente `<experimento>_module.py` herdando de `SimulationModule`.
