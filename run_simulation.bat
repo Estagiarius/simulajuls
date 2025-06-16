@@ -120,7 +120,7 @@ echo.
 
 echo Starting Frontend Server in a new window...
 REM Using /k to keep window open for npm run dev output
-start "Frontend Server" cmd /k "echo Frontend Window: Installing Node.js dependencies (npm install)... && npm install && if errorlevel 1 (echo Frontend Window: Error during npm install. && pause && exit /b 1) && echo Frontend Window: Starting SvelteKit dev server (npm run dev)... && npm run dev"
+start "Frontend Server" cmd /k "echo Frontend Window: Changing to frontend directory... && cd frontend && echo Frontend Window: Installing Node.js dependencies (npm install)... && npm install && echo Frontend Window: Starting SvelteKit dev server (npm run dev)... && npm run dev"
 echo Frontend server process started. (Check new window)
 echo.
 
