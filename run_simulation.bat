@@ -38,17 +38,19 @@ echo.
 
 echo.
 echo --- Checking for npm ---
-echo Attempting to run 'npm --version' directly. Please wait...
+echo Attempting to run 'npm --version' in a subshell. Please wait...
 echo If the script hangs here, there might be an issue with your npm installation or PATH.
 
 REM Define a temporary file for npm version output
 set NPM_VERSION_TMP_FILE=%TEMP%\npm_version_output.txt
 
-npm --version > "%NPM_VERSION_TMP_FILE%" 2>&1
+cmd /c "npm --version > "%NPM_VERSION_TMP_FILE%" 2>&1"
 set NPM_CMD_EXIT_CODE=0
 for /f "tokens=*" %%a in ("%errorlevel%") do set NPM_CMD_EXIT_CODE=%%a
 
-echo Captured errorlevel from 'npm --version': [%NPM_CMD_EXIT_CODE%]
+echo Captured errorlevel from 'cmd /c npm --version': [%NPM_CMD_EXIT_CODE%]
+
+echo DBG: Buffer command - testing if this line executes before IF ERRORLEVEL.
 
 IF ERRORLEVEL 1 (
     echo.
