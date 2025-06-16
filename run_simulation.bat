@@ -79,7 +79,7 @@ if not exist backend\venv (
 echo.
 
 echo Activating virtual environment for main script (for pip install)...
-call backend\venv\Scripts\activate.bat
+call backend\venv\Scripts\activate
 if errorlevel 1 (
     echo Error: Failed to activate Python virtual environment in main script.
     echo.
@@ -101,7 +101,7 @@ echo Python dependencies installed successfully.
 echo.
 
 echo Starting Backend Server in a new window...
-start "Backend Server" cmd /c "echo Backend Window: Activating venv... && call backend\venv\Scripts\activate.bat && echo Backend Window: Starting FastAPI server... && python -m uvicorn backend.main:app --reload --port 8000 || (echo Backend Window: Error starting server. && pause)"
+start "Backend Server" cmd /c "echo Backend Window: Activating venv... && call backend\venv\Scripts\activate && echo Backend Window: Starting FastAPI server... && python -m uvicorn backend.main:app --reload --port 8000 || (echo Backend Window: Error starting server. && pause)"
 echo Backend server process started. (Check new window)
 echo.
 
