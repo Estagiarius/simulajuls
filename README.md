@@ -50,7 +50,16 @@ To run the script, navigate to the project root directory in your terminal and e
 ./run_simulation.sh
 ```
 
-**Note:** This script is primarily intended for Linux/macOS environments. Windows users may need to adapt the commands within the script or follow the manual steps outlined in the "Como Executar o Projeto Localmente" section. The script will:
+**For Windows users:**
+
+A `run_simulation.bat` script is provided to automate the setup and launch on Windows. Double-click the `run_simulation.bat` file or run it from your command prompt:
+
+```batch
+.\run_simulation.bat
+```
+The script will guide you through the process and open separate command prompt windows for the backend and frontend servers. Please monitor these new windows for server output and any error messages. The main script window will provide overall progress; closing it will not stop the individual server windows.
+
+**Note:** The `run_simulation.sh` script is primarily intended for Linux/macOS environments. For Windows, please use the `run_simulation.bat` script. Alternatively, users on any platform can follow the manual steps outlined in the "Como Executar o Projeto Localmente" section. The script will:
 1.  Set up and start the Python backend server.
 2.  Set up and start the SvelteKit frontend development server.
 
