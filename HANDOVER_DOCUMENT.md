@@ -48,7 +48,67 @@ Para executar e testar a aplicação:
         ```
     *   A API estará acessível em `http://localhost:8000`. Você pode ver a documentação interativa da API (Swagger UI) em `http://localhost:8000/docs`.
 
-## 3. Testes
+## 3. Detalhes dos Módulos de Simulação Implementados
+
+Esta seção detalha aspectos específicos de módulos que receberam atualizações recentes significativas.
+
+### 3.1 Química: Reação Ácido-Base (`acid_base_module.py`)
+*   **Frontend:** `frontend/src/routes/experiments/chemistry/acid-base/+page.svelte`
+*   **Descrição:** Simula a reação entre um ácido e uma base (fortes e monopróticos/monohidroxílicos) e calcula o pH resultante. Permite a seleção de indicadores visuais.
+
+### 3.2 Física: Lançamento Oblíquo (`projectile_module.py`)
+
+O módulo de lançamento oblíquo foi aprimorado com as seguintes funcionalidades:
+
+#### Novas Funcionalidades
+
+*   **Conversão de Unidades:**
+    *   **Descrição:** Permite que os usuários forneçam dados de entrada (velocidade inicial, altura inicial) em diferentes unidades e selecionem as unidades para os resultados da simulação.
+    *   **Impacto no Backend:**
+        *   `models_projectile.py`: Atualizado com novos campos para unidades de entrada (`initial_velocity_unit`, `initial_height_unit`) e um modelo `OutputUnitSelection` para especificar unidades de saída. Validadores foram adicionados para garantir que apenas unidades permitidas sejam usadas.
+        *   `unit_conversion.py`: Um novo arquivo foi criado contendo funções para converter valores entre unidades (e.g., m/s para km/h, ft para m) e a unidade base SI (m/s, m, s).
+        *   `projectile_module.py`: A lógica principal em `run_simulation` foi modificada para:
+            1.  Converter todos os parâmetros de entrada para unidades SI (metros, segundos, m/s) usando as funções de `unit_conversion.py`.
+            2.  Realizar todos os cálculos de física interna exclusivamente com unidades SI.
+            3.  Converter os resultados finais (alcance, altura máxima, tempo de voo, componentes da velocidade, pontos da trajetória) para as unidades de saída selecionadas pelo usuário antes de retornar a resposta.
+    *   **Requisitos para Frontend:**
+        *   A UI (`frontend/src/routes/experiments/physics/projectile-launch/+page.svelte`) permite que os usuários selecionem a unidade para os campos de entrada relevantes (velocidade inicial, altura inicial).
+        *   A UI permite que os usuários selecionem as unidades desejadas para os principais resultados numéricos.
+        *   As chamadas de API para `/api/simulation/projectile-launch/start` incluem os novos campos de unidade no payload.
+        *   Os resultados exibidos na UI indicam claramente as unidades correspondentes.
+
+*   **Geração Adaptativa de Pontos de Trajetória:**
+    *   **Descrição:** O método de geração de pontos para a trajetória do projétil agora usa um passo de tempo (`time_step`) adaptativo.
+    *   **Impacto no Backend (`projectile_module.py`):**
+        *   Se o tempo total de voo for muito curto, o `time_step` é reduzido para garantir um número mínimo de pontos (atualmente 20 intervalos, resultando em 21 pontos) para uma plotagem suave.
+        *   Se o tempo total de voo for muito longo (resultando em mais de 2000 pontos com o `time_step` padrão de 0.05s), o `time_step` é aumentado para limitar o número total de pontos (atualmente 2000 intervalos, resultando em 2001 pontos), otimizando a performance.
+        *   Para durações de voo intermediárias, o `time_step` padrão de 0.05s é mantido.
+    *   **Impacto no Frontend:**
+        *   A plotagem da trajetória no frontend (`frontend/src/routes/experiments/physics/projectile-launch/+page.svelte`) beneficia-se dessa mudança, mostrando curvas mais suaves para lançamentos de baixa energia e evitando sobrecarga de dados para lançamentos de alta energia.
+
+#### Testes Específicos do Módulo
+
+*   Os testes unitários em `backend/simulations/physics/test_projectile_module.py` foram significativamente expandidos para cobrir:
+    *   Casos de teste com diferentes unidades de entrada (e.g., velocidade em km/h, altura em ft) e verificação dos resultados em SI.
+    *   Casos de teste para conversão de unidades de saída (e.g., solicitar resultados em km, ft, min).
+    *   Testes específicos para a lógica de geração adaptativa da trajetória, verificando o número de pontos gerados para cenários de baixa energia, alta energia (limitado) e casos padrão.
+    *   Os testes existentes foram atualizados para incluir os novos parâmetros de unidade.
+
+### 3.3 Biologia: Genética Mendeliana (`mendelian_genetics_module.py`)
+*   **Frontend:** `frontend/src/routes/experiments/biology/mendelian-genetics/+page.svelte`
+*   **Descrição:** Permite aos usuários realizar cruzamentos genéticos simples (monoíbridos) e visualizar os resultados em um quadro de Punnett, juntamente com as proporções genotípicas e fenotípicas.
+
+### 3.4 Química: Curva de Titulação Ácido-Base (`acid_base_titration_module.py`)
+*   **Frontend:** `frontend/src/routes/experiments/chemistry/acid-base-titration/+page.svelte`
+*   **Descrição:** Simula uma titulação ácido-base. Os usuários podem definir as propriedades do analito (ácido ou base, incluindo concentração, volume e, opcionalmente, Ka/Kb para ácidos/bases fracas) e do titulante (ácido ou base forte, com nome e concentração). Também se configura o processo de titulação (volume inicial, volume final e incremento de volume).
+*   **Funcionalidades Frontend:**
+    *   Interface de usuário para entrada de todos os parâmetros necessários.
+    *   Comunicação com o endpoint `/api/simulation/acid-base-titration/start`.
+    *   Visualização da curva de titulação (pH vs. volume de titulante) usando um gráfico SVG customizado.
+    *   Exibição clara da mensagem de status da simulação e um resumo dos parâmetros utilizados.
+    *   Inclui validações básicas no lado do cliente para melhorar a experiência do usuário (por exemplo, verificar se o volume final é maior que o inicial).
+
+## 4. Testes
 
 *   **Testes Unitários dos Módulos:**
     *   É crucial executar os testes unitários para cada módulo de simulação para garantir sua corretude individual.
@@ -56,6 +116,7 @@ Para executar e testar a aplicação:
         ```bash
         # Exemplo para o módulo ácido-base
         pytest simulations/chemistry/test_acid_base_module.py
+        pytest simulations/chemistry/test_acid_base_titration_module.py
 
         # Exemplo para o módulo de lançamento oblíquo
         pytest simulations/physics/test_projectile_module.py
@@ -72,7 +133,7 @@ Para executar e testar a aplicação:
     *   Use uma ferramenta como `curl` ou Postman para testar os endpoints da API:
         *   **`GET /api/experiments`**: Verifica se a lista de experimentos é retornada corretamente.
         *   **`POST /api/simulation/{experiment_name}/start`**:
-            *   Teste para cada `experiment_name` (`acid-base`, `projectile-launch`, `mendelian-genetics`).
+            *   Teste para cada `experiment_name` (`acid-base`, `projectile-launch`, `mendelian-genetics`, `acid-base-titration`).
             *   Envie um JSON válido no corpo da requisição com os parâmetros esperados pelo respectivo módulo. Verifique se os resultados são calculados corretamente.
             *   Exemplo de payload para `acid-base`:
                 ```json
@@ -82,6 +143,26 @@ Para executar e testar a aplicação:
                     "base_concentration": 0.1,
                     "base_volume": 50,
                     "indicator_name": "Fenolftaleína"
+                }
+                ```
+            *   Exemplo de payload para `acid-base-titration`:
+                ```json
+                {
+                    "analyte_is_acid": true,
+                    "acid_name": "HCl",
+                    "acid_concentration": 0.1,
+                    "acid_volume": 50,
+                    "acid_ka": null,
+                    "base_name": null,
+                    "base_concentration": null,
+                    "base_volume": null,
+                    "base_kb": null,
+                    "titrant_is_acid": false,
+                    "titrant_name": "NaOH",
+                    "titrant_concentration": 0.1,
+                    "initial_titrant_volume_ml": 0.0,
+                    "final_titrant_volume_ml": 100.0,
+                    "volume_increment_ml": 1.0
                 }
                 ```
         *   **`POST /api/simulations/save`**:

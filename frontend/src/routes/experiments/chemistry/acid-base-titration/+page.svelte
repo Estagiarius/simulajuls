@@ -22,6 +22,11 @@
   // Update titrant_is_acid based on analyte_is_acid
   $: titrant_is_acid = !analyte_is_acid;
 
+import { onMount } from 'svelte'; // For testing with sample data
+
+  import { onMount } from 'svelte'; // For testing with sample data
+  import { goto } from '$app/navigation'; // For navigation
+
   // Update titrant_name based on titrant_is_acid
   // $: if (titrant_is_acid) {
   //     titrant_name = acid_name || 'HCl'; // Default to analyte name or HCl
@@ -29,6 +34,23 @@
   //     titrant_name = base_name || 'NaOH'; // Default to analyte name or NaOH
   //   }
 
+
+  // // For testing SVG chart with sample data:
+  // onMount(() => {
+  //     titrationCurveData = [
+  //         { titrant_volume_added_ml: 0, ph: 2.0 },
+  //         { titrant_volume_added_ml: 5, ph: 2.5 },
+  //         { titrant_volume_added_ml: 10, ph: 3.0 },
+  //         { titrant_volume_added_ml: 12, ph: 7.0 },
+  //         { titrant_volume_added_ml: 13, ph: 11.0 },
+  //         { titrant_volume_added_ml: 15, ph: 11.5 },
+  //         { titrant_volume_added_ml: 20, ph: 12.0 }
+  //     ];
+  //     // To test single point:
+  //     // titrationCurveData = [ { titrant_volume_added_ml: 10, ph: 7.0 } ];
+  //     // To test two points with same X:
+  //     // titrationCurveData = [ { titrant_volume_added_ml: 10, ph: 7.0 }, { titrant_volume_added_ml: 10, ph: 8.0 } ];
+  // });
 
   let simulationResults = null;
   let titrationCurveData = [];
@@ -64,31 +86,58 @@
     const minX = Math.min(...xValues);
     const maxX = Math.max(...xValues);
     const minY = 0; // pH typically 0-14
-    const maxY = 14;
+    const maxY = 14; // Adjusted to ensure pH 14 is at the top edge of plotting area
 
-    const xScale = (val) => padding.left + ((val - minX) / (maxX - minX)) * (svgWidth - padding.left - padding.right);
-    const yScale = (val) => svgHeight - padding.bottom - ((val - minY) / (maxY - minY)) * (svgHeight - padding.top - padding.bottom);
+    const drawableWidth = svgWidth - padding.left - padding.right;
+    const drawableHeight = svgHeight - padding.top - padding.bottom;
 
-    svgPathD = "M" + titrationCurveData.map(d => `${xScale(d.titrant_volume_added_ml)},${yScale(d.ph)}`).join(" L");
+    const xScale = (val) => {
+      if (maxX === minX) { // Handle case with one or all X values being the same
+        return padding.left + drawableWidth / 2;
+      }
+      return padding.left + ((val - minX) / (maxX - minX)) * drawableWidth;
+    };
+
+    const yScale = (val) => {
+        // Ensure val is within minY and maxY for scaling to prevent points going off chart
+        const clampedVal = Math.max(minY, Math.min(maxY, val));
+        return svgHeight - padding.bottom - ((clampedVal - minY) / (maxY - minY)) * drawableHeight;
+    };
+
+    if (titrationCurveData.length > 0) {
+        svgPathD = "M" + titrationCurveData.map(d => `${xScale(d.titrant_volume_added_ml)},${yScale(d.ph)}`).join(" L");
+    } else {
+        svgPathD = ''; // No path if no data
+    }
 
     // Generate X Axis Ticks (e.g., 5 ticks)
     xAxisTicks = [];
-    const xTickCount = 5;
-    const xTickIncrement = (maxX - minX) / (xTickCount -1);
-    if (isFinite(xTickIncrement) && xTickIncrement > 0) {
-      for (let i = 0; i < xTickCount; i++) {
-        const value = minX + i * xTickIncrement;
-        xAxisTicks.push({ x: xScale(value), label: value.toFixed(1) });
-      }
-    } else if (xValues.length === 1) { // Single data point
-        xAxisTicks.push({ x: xScale(xValues[0]), label: xValues[0].toFixed(1) });
+    const xTickCount = Math.min(5, xValues.length > 1 ? 5 : xValues.length); // Max 5 ticks, or less if few points
+    if (maxX === minX && xValues.length > 0) { // Single unique X value
+        xAxisTicks = [{ x: xScale(minX), label: minX.toFixed(1) }];
+    } else if (xValues.length === 1) {
+        xAxisTicks = [{ x: xScale(xValues[0]), label: xValues[0].toFixed(1) }];
+    } else if (xValues.length > 1) {
+        const xTickIncrement = (maxX - minX) / (xTickCount -1);
+        for (let i = 0; i < xTickCount; i++) {
+            const value = minX + i * xTickIncrement;
+            xAxisTicks.push({ x: xScale(value), label: value.toFixed(1) });
+        }
+        // Ensure the last tick is exactly maxX if not already covered
+        if (xTickCount > 1 && (minX + (xTickCount-1) * xTickIncrement) < maxX) {
+             if (!xAxisTicks.find(tick => tick.label === maxX.toFixed(1))) {
+                xAxisTicks.pop(); // Remove last to avoid clutter if too close
+                xAxisTicks.push({ x: xScale(maxX), label: maxX.toFixed(1) });
+             }
+        }
     }
 
 
-    // Generate Y Axis Ticks (e.g., 0, 2, 4 ... 14)
+    // Generate Y Axis Ticks (0, 2, 4 ... 14)
     yAxisTicks = [];
     const yTickIncrement = 2;
     for (let i = minY; i <= maxY; i += yTickIncrement) {
+      // Ensure label is not empty if i is 0
       yAxisTicks.push({ y: yScale(i), label: i.toString() });
     }
   }
@@ -311,95 +360,129 @@
     </section>
   </form>
 
-  <section class="mb-8 p-6 bg-white shadow-md rounded-lg">
     <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-2">Resultados da Simulação</h2>
 
     {#if isLoading}
       <div class="text-center my-4 p-4">
-        <p class="text-lg text-blue-600 animate-pulse">Carregando resultados...</p>
-        <!-- You could add a more sophisticated spinner here if desired -->
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+        <p class="text-lg text-primary mt-2">Calculando...</p>
       </div>
     {/if}
 
     {#if errorMessage}
-      <div class="my-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md shadow">
-        <h3 class="font-bold text-lg mb-2">Erro na Simulação:</h3>
-        <p>{errorMessage}</p>
+      <div class="alert alert-error shadow-lg my-4">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span><strong>Erro na Simulação:</strong> {errorMessage}</span>
+        </div>
       </div>
     {/if}
 
     {#if simulationResults && !isLoading && !errorMessage}
-      <div class="mt-4 space-y-4">
+      <div class="mt-4 space-y-6">
         {#if simulationResults.message}
-          <div class="p-4 bg-blue-50 border border-blue-300 text-blue-700 rounded-md shadow-sm">
-            <p><strong>Status da Simulação:</strong> {simulationResults.message}</p>
+          <div class="alert alert-info shadow-lg">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>{simulationResults.message}</span>
+            </div>
           </div>
         {/if}
 
         {#if simulationResults.parameters_used}
-          <div class="p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
-            <h3 class="text-xl font-semibold text-gray-700 mb-3">Parâmetros Utilizados:</h3>
-            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          <div class="p-4 bg-base-200 rounded-lg shadow"> {/* Changed background for better contrast */}
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Parâmetros Utilizados:</h3>
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
               {#if simulationResults.parameters_used.analyte_is_acid}
-                <div class="col-span-full mb-1 font-medium text-gray-600">Analito (Ácido):</div>
-                <dt class="font-semibold text-gray-600">Nome:</dt>
-                <dd class="text-gray-800">{simulationResults.parameters_used.acid_name || 'N/A'}</dd>
-                <dt class="font-semibold text-gray-600">Concentração:</dt>
-                <dd class="text-gray-800">{simulationResults.parameters_used.acid_concentration} mol/L</dd>
-                <dt class="font-semibold text-gray-600">Volume:</dt>
-                <dd class="text-gray-800">{simulationResults.parameters_used.acid_volume} mL</dd>
+                <div class="col-span-full mb-2 text-lg font-medium text-gray-800">Analito (Ácido):</div>
+                <div>
+                  <dt class="font-semibold text-gray-600">Nome:</dt>
+                  <dd class="text-gray-800">{simulationResults.parameters_used.acid_name || 'N/A'}</dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-gray-600">Concentração:</dt>
+                  <dd class="text-gray-800">{simulationResults.parameters_used.acid_concentration} mol/L</dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-gray-600">Volume:</dt>
+                  <dd class="text-gray-800">{simulationResults.parameters_used.acid_volume} mL</dd>
+                </div>
                 {#if simulationResults.parameters_used.acid_ka}
-                  <dt class="font-semibold text-gray-600">Ka:</dt>
-                  <dd class="text-gray-800">{simulationResults.parameters_used.acid_ka}</dd>
+                  <div>
+                    <dt class="font-semibold text-gray-600">Ka:</dt>
+                    <dd class="text-gray-800">{simulationResults.parameters_used.acid_ka}</dd>
+                  </div>
                 {/if}
               {:else}
-                <div class="col-span-full mb-1 font-medium text-gray-600">Analito (Base):</div>
-                <dt class="font-semibold text-gray-600">Nome:</dt>
-                <dd class="text-gray-800">{simulationResults.parameters_used.base_name || 'N/A'}</dd>
-                <dt class="font-semibold text-gray-600">Concentração:</dt>
-                <dd class="text-gray-800">{simulationResults.parameters_used.base_concentration} mol/L</dd>
-                <dt class="font-semibold text-gray-600">Volume:</dt>
-                <dd class="text-gray-800">{simulationResults.parameters_used.base_volume} mL</dd>
+                <div class="col-span-full mb-2 text-lg font-medium text-gray-800">Analito (Base):</div>
+                <div>
+                  <dt class="font-semibold text-gray-600">Nome:</dt>
+                  <dd class="text-gray-800">{simulationResults.parameters_used.base_name || 'N/A'}</dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-gray-600">Concentração:</dt>
+                  <dd class="text-gray-800">{simulationResults.parameters_used.base_concentration} mol/L</dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-gray-600">Volume:</dt>
+                  <dd class="text-gray-800">{simulationResults.parameters_used.base_volume} mL</dd>
+                </div>
                 {#if simulationResults.parameters_used.base_kb}
-                  <dt class="font-semibold text-gray-600">Kb:</dt>
-                  <dd class="text-gray-800">{simulationResults.parameters_used.base_kb}</dd>
+                  <div>
+                    <dt class="font-semibold text-gray-600">Kb:</dt>
+                    <dd class="text-gray-800">{simulationResults.parameters_used.base_kb}</dd>
+                  </div>
                 {/if}
               {/if}
 
-              <div class="col-span-full mt-2 mb-1 font-medium text-gray-600">Titulante:</div>
-              <dt class="font-semibold text-gray-600">Tipo:</dt>
-              <dd class="text-gray-800">{simulationResults.parameters_used.titrant_is_acid ? 'Ácido' : 'Base'}</dd>
-              <dt class="font-semibold text-gray-600">Nome:</dt>
-              <dd class="text-gray-800">{simulationResults.parameters_used.titrant_name || 'N/A'}</dd>
-              <dt class="font-semibold text-gray-600">Concentração:</dt>
-              <dd class="text-gray-800">{simulationResults.parameters_used.titrant_concentration} mol/L</dd>
+              <div class="col-span-full mt-3 mb-1 text-lg font-medium text-gray-800">Titulante:</div>
+              <div>
+                <dt class="font-semibold text-gray-600">Tipo:</dt>
+                <dd class="text-gray-800">{simulationResults.parameters_used.titrant_is_acid ? 'Ácido' : 'Base'}</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-600">Nome:</dt>
+                <dd class="text-gray-800">{simulationResults.parameters_used.titrant_name || 'N/A'}</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-600">Concentração:</dt>
+                <dd class="text-gray-800">{simulationResults.parameters_used.titrant_concentration} mol/L</dd>
+              </div>
 
-              <div class="col-span-full mt-2 mb-1 font-medium text-gray-600">Intervalo de Titulação:</div>
-              <dt class="font-semibold text-gray-600">Volume Inicial:</dt>
-              <dd class="text-gray-800">{simulationResults.parameters_used.initial_titrant_volume_ml} mL</dd>
-              <dt class="font-semibold text-gray-600">Volume Final:</dt>
-              <dd class="text-gray-800">{simulationResults.parameters_used.final_titrant_volume_ml} mL</dd>
-              <dt class="font-semibold text-gray-600">Incremento:</dt>
-              <dd class="text-gray-800">{simulationResults.parameters_used.volume_increment_ml} mL</dd>
+              <div class="col-span-full mt-3 mb-1 text-lg font-medium text-gray-800">Processo de Titulação:</div>
+              <div>
+                <dt class="font-semibold text-gray-600">Volume Inicial:</dt>
+                <dd class="text-gray-800">{simulationResults.parameters_used.initial_titrant_volume_ml} mL</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-600">Volume Final:</dt>
+                <dd class="text-gray-800">{simulationResults.parameters_used.final_titrant_volume_ml} mL</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-600">Incremento:</dt>
+                <dd class="text-gray-800">{simulationResults.parameters_used.volume_increment_ml} mL</dd>
+              </div>
             </dl>
           </div>
         {/if}
 
-        {#if simulationResults.equivalence_points_ml && simulationResults.equivalence_points_ml.length > 0}
-          <div class="p-4 bg-green-50 border border-green-300 text-green-700 rounded-md shadow-sm">
-            <p><strong>Pontos de Equivalência Detectados (mL):</strong> {simulationResults.equivalence_points_ml.join(', ')}</p>
+        {#if simulationResults && simulationResults.equivalence_points_ml && simulationResults.equivalence_points_ml.length > 0}
+          <div class="alert alert-success shadow-lg mt-4">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span><strong>Pontos de Equivalência Detectados (mL):</strong> {simulationResults.equivalence_points_ml.join(', ')}</span>
+            </div>
           </div>
         {/if}
       </div>
     {/if}
-    <!-- The pre tag for raw JSON is now definitely removed/disabled by the logic above -->
   </section>
 
   <section class="mb-8 p-6 bg-white shadow-md rounded-lg">
     <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-2">Gráfico da Curva de Titulação</h2>
     {#if titrationCurveData && titrationCurveData.length > 0}
-      <div class="chart-container" role="figure" aria-labelledby="chart-title">
-        <svg {width} {height} viewBox="0 0 {svgWidth} {svgHeight}" preserveAspectRatio="xMidYMin meet" aria-labelledby="chart-title-svg" aria-describedby="chart-desc-svg">
+      <div class="chart-container bg-base-100 p-4 rounded-lg shadow-inner" role="figure" aria-labelledby="chart-title"> {/* Added bg-base-100, p-4, rounded-lg, shadow-inner */}
+        <svg {width} {height} viewBox="0 0 {svgWidth} {svgHeight}" preserveAspectRatio="xMidYMin meet" aria-labelledby="chart-title-svg" aria-describedby="chart-desc-svg" class="mx-auto"> {/* Added mx-auto to center if width is constrained */}
           <title id="chart-title-svg">Curva de Titulação Ácido-Base</title>
           <desc id="chart-desc-svg">Gráfico de pH em função do volume de titulante adicionado.</desc>
 
@@ -408,32 +491,42 @@
           {#each yAxisTicks as tick}
             <g class="tick">
               <line x1={padding.left - 5} y1={tick.y} x2={padding.left} y2={tick.y} stroke="currentColor" />
-              <text x={padding.left - 10} y={tick.y + 4} text-anchor="end" font-size="10">{tick.label}</text>
+              <text x={padding.left - 10} y={tick.y + 4} text-anchor="end" font-size="10" class="fill-current text-xs">{tick.label}</text>
             </g>
           {/each}
-          <text x={padding.left - 35} y={padding.top + (svgHeight - padding.top - padding.bottom) / 2} transform="rotate(-90, {padding.left - 35}, {padding.top + (svgHeight - padding.top - padding.bottom) / 2})" text-anchor="middle" font-size="12">pH</text>
+          <text x={padding.left - 35} y={padding.top + (svgHeight - padding.top - padding.bottom) / 2} transform="rotate(-90, {padding.left - 35}, {padding.top + (svgHeight - padding.top - padding.bottom) / 2})" text-anchor="middle" font-size="12" class="fill-current font-semibold">pH</text>
 
           <!-- X Axis (Volume) -->
           <line x1={padding.left} y1={svgHeight - padding.bottom} x2={svgWidth - padding.right} y2={svgHeight - padding.bottom} stroke="currentColor" />
           {#each xAxisTicks as tick}
             <g class="tick">
               <line x1={tick.x} y1={svgHeight - padding.bottom} x2={tick.x} y2={svgHeight - padding.bottom + 5} stroke="currentColor" />
-              <text x={tick.x} y={svgHeight - padding.bottom + 15} text-anchor="middle" font-size="10">{tick.label}</text>
+              <text x={tick.x} y={svgHeight - padding.bottom + 15} text-anchor="middle" font-size="10" class="fill-current text-xs">{tick.label}</text>
             </g>
           {/each}
-          <text x={padding.left + (svgWidth - padding.left - padding.right) / 2} y={svgHeight - padding.bottom + 35} text-anchor="middle" font-size="12">Volume do Titulante Adicionado (mL)</text>
+          <text x={padding.left + (svgWidth - padding.left - padding.right) / 2} y={svgHeight - padding.bottom + 35} text-anchor="middle" font-size="12" class="fill-current font-semibold">Volume do Titulante Adicionado (mL)</text>
 
           <!-- Titration Curve Path -->
-          <path d={svgPathD} fill="none" stroke="var(--color-primary-500, #3b82f6)" stroke-width="2" />
+          <path d={svgPathD} fill="none" stroke="var(--color-primary, oklch(var(--p)))" stroke-width="2" /> {/* Using DaisyUI primary color variable */}
 
         </svg>
       </div>
     {:else if isLoading}
-      <p>Gerando dados do gráfico...</p>
+      <div class="text-center py-10">
+        <span class="loading loading-lg loading-dots"></span>
+        <p class="text-gray-500 mt-2">Gerando gráfico...</p>
+      </div>
     {:else if !errorMessage && !simulationResults}
-      <p>Preencha os parâmetros e clique em "Simular" para gerar o gráfico.</p>
+      <div class="text-center py-10 text-gray-500">
+        <p>Preencha os parâmetros da simulação e clique em "Simular" para gerar o gráfico.</p>
+      </div>
     {:else if !errorMessage && simulationResults && (!titrationCurveData || titrationCurveData.length === 0)}
-      <p>Não há dados suficientes na curva de titulação para desenhar o gráfico.</p>
+      <div class="alert alert-warning shadow-lg my-4">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          <span>Não há dados suficientes na curva de titulação para desenhar o gráfico.</span>
+        </div>
+      </div>
     {/if}
   </section>
 </main>
@@ -443,10 +536,10 @@
     width: 100%;
     max-width: 700px;
     margin: 20px auto;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 10px;
+    /* background-color: #f9f9f9; Tailwind bg-base-100 used instead */
+    /* border: 1px solid #e0e0e0; */ /* Replaced by shadow-md */
+    /* border-radius: 4px; */ /* Handled by rounded-lg */
+    padding: 1rem; /* Using Tailwind padding classes */
   }
   svg {
     display: block;
@@ -454,7 +547,8 @@
     height: auto;
   }
   .tick text {
-    fill: #555;
+    fill: currentColor; /* Use Tailwind's text color utilities */
+    font-size: 0.75rem; /* text-xs */
   }
   path {
     stroke-linecap: round;
