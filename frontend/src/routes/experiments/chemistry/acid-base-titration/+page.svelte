@@ -109,6 +109,16 @@
     }
   }
 
+  function parseOptionalFloat(value) {
+    if (value === null || String(value).trim() === "") {
+      return null;
+    }
+    const floatVal = parseFloat(value);
+    if (isNaN(floatVal)) {
+      return null;
+    }
+    return floatVal;
+  }
 
   async function runSimulation() {
     isLoading = true;
@@ -153,7 +163,7 @@
       params.acid_name = acid_name;
       params.acid_concentration = parseFloat(acid_concentration);
       params.acid_volume = parseFloat(acid_volume);
-      params.acid_ka = acid_ka ? acid_ka : null;
+      params.acid_ka = parseOptionalFloat(acid_ka);
       params.base_name = null;
       params.base_concentration = null;
       params.base_volume = null;
@@ -162,7 +172,7 @@
       params.base_name = base_name;
       params.base_concentration = parseFloat(base_concentration);
       params.base_volume = parseFloat(base_volume);
-      params.base_kb = base_kb ? base_kb : null;
+      params.base_kb = parseOptionalFloat(base_kb);
       params.acid_name = null;
       params.acid_concentration = null;
       params.acid_volume = null;
