@@ -507,6 +507,7 @@
       </div>
     {/if}
   </section>
+{/if}
 
 <style>
   .chart-container {
