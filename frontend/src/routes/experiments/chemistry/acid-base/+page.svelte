@@ -399,13 +399,6 @@
     border: 1px solid #ccc;
     border-radius: 4px;
   }
-  .ph-scale-container h4 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      text-align: center;
-      font-weight: normal;
-      color: #555;
-  }
 
   .ph-bar {
     width: 100%;
