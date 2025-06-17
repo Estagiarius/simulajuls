@@ -1,4 +1,3 @@
-```svelte
 <script>
   // import { goto } from '$app/navigation'; // For navigation - remove if not used
 
@@ -142,7 +141,6 @@
     }
 
     let params = {
-      analyte_is_acid: analyte_is_acid,
       titrant_is_acid: titrant_is_acid,
       titrant_name: titrant_name,
       titrant_concentration: parseFloat(titrant_concentration),
