@@ -4,13 +4,13 @@ from backend.simulations.base_simulation import BaseSimulationParams, BaseSimula
 
 class AcidBaseSimulationParams(BaseSimulationParams):
     acid_name: Optional[str] = Field(default="Ácido Forte", description="Nome do ácido (ex: HCl, H₂SO₄, CH₃COOH)")
-    acid_concentration: float = Field(gt=0, description="Concentração molar do ácido (mol/L)")
-    acid_volume: float = Field(gt=0, description="Volume de ácido a ser usado (mL)")
+    acid_concentration: Optional[float] = Field(default=None, gt=0, description="Concentração molar do ácido (mol/L)")
+    acid_volume: Optional[float] = Field(default=None, gt=0, description="Volume de ácido a ser usado (mL)")
     acid_ka: Optional[float] = Field(default=None, gt=0, description="Constante de ionização do ácido (Ka) para ácidos fracos")
 
     base_name: Optional[str] = Field(default="Base Forte", description="Nome da base (ex: NaOH, Ca(OH)₂, NH₃)")
-    base_concentration: float = Field(gt=0, description="Concentração molar da base (mol/L)")
-    base_volume: float = Field(gt=0, description="Volume de base a ser adicionado (mL)")
+    base_concentration: Optional[float] = Field(default=None, gt=0, description="Concentração molar da base (mol/L)")
+    base_volume: Optional[float] = Field(default=None, gt=0, description="Volume de base a ser adicionado (mL)")
     base_kb: Optional[float] = Field(default=None, gt=0, description="Constante de ionização da base (Kb) para bases fracas")
 
     indicator_name: Optional[str] = Field(default=None, description="Nome do indicador de pH (ex: Fenolftaleína, Vermelho de Metila)")
