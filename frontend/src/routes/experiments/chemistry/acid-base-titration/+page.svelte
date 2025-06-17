@@ -4,20 +4,20 @@
   let analyte_is_acid = true; // Default to acid
   let acid_name = 'HCl';
   let acid_concentration = 0.1;
-  let acid_volume = 50;
+  let acid_volume = 25;
   let acid_ka = ''; // Optional, so can be empty string
 
   let base_name = 'NaOH';
   let base_concentration = 0.1;
-  let base_volume = 50;
+  let base_volume = 25;
   let base_kb = ''; // Optional
 
   let titrant_is_acid = false; // Titrant is typically the opposite of analyte
   let titrant_name = 'NaOH'; // Default titrant name, can be changed by user
   let titrant_concentration = 0.1;
   let initial_titrant_volume_ml = 0.0;
-  let final_titrant_volume_ml = 100;
-  let volume_increment_ml = 1;
+  let final_titrant_volume_ml = 50.0;
+  let volume_increment_ml = 0.5;
 
   // Update titrant_is_acid based on analyte_is_acid
   $: titrant_is_acid = !analyte_is_acid;
