@@ -356,7 +356,7 @@
     {/if}
 
     {#if simulationResults && !isLoading && !errorMessage}
-      <div class="mt-4 space-y-6"> {/* Increased spacing for better readability */}
+      <div class="mt-4 space-y-6">
         {#if simulationResults.message}
           <div class="alert alert-info shadow-lg">
             <div>
@@ -444,7 +444,7 @@
         {/if}
 
         {#if simulationResults.equivalence_points_ml && simulationResults.equivalence_points_ml.length > 0}
-          <div class="alert alert-success shadow-lg mt-4"> {/* Added mt-4 for spacing */}
+          <div class="alert alert-success shadow-lg mt-4"> <!-- Added mt-4 for spacing -->
             <div>
                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               <span><strong>Pontos de Equivalência Detectados (mL):</strong> {simulationResults.equivalence_points_ml.join(', ')}</span>
@@ -459,8 +459,8 @@
   <section class="mb-8 p-6 bg-white shadow-md rounded-lg">
     <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-2">Gráfico da Curva de Titulação</h2>
     {#if titrationCurveData && titrationCurveData.length > 0}
-      <div class="chart-container bg-base-100 p-4 rounded-lg shadow-inner" role="figure" aria-labelledby="chart-title"> {/* Added bg-base-100, p-4, rounded-lg, shadow-inner */}
-        <svg {width} {height} viewBox="0 0 {svgWidth} {svgHeight}" preserveAspectRatio="xMidYMin meet" aria-labelledby="chart-title-svg" aria-describedby="chart-desc-svg" class="mx-auto"> {/* Added mx-auto to center if width is constrained */}
+      <div class="chart-container bg-base-100 p-4 rounded-lg shadow-inner" role="figure" aria-labelledby="chart-title"> <!-- Added bg-base-100, p-4, rounded-lg, shadow-inner -->
+        <svg {width} {height} viewBox="0 0 {svgWidth} {svgHeight}" preserveAspectRatio="xMidYMin meet" aria-labelledby="chart-title-svg" aria-describedby="chart-desc-svg" class="mx-auto"> <!-- Added mx-auto to center if width is constrained -->
           <title id="chart-title-svg">Curva de Titulação Ácido-Base</title>
           <desc id="chart-desc-svg">Gráfico de pH em função do volume de titulante adicionado.</desc>
 
@@ -485,7 +485,7 @@
           <text x={padding.left + (svgWidth - padding.left - padding.right) / 2} y={svgHeight - padding.bottom + 35} text-anchor="middle" font-size="12" class="fill-current font-semibold">Volume do Titulante Adicionado (mL)</text>
 
           <!-- Titration Curve Path -->
-          <path d={svgPathD} fill="none" stroke="var(--color-primary, oklch(var(--p)))" stroke-width="2" /> {/* Using DaisyUI primary color variable */}
+          <path d={svgPathD} fill="none" stroke="var(--color-primary, oklch(var(--p)))" stroke-width="2" /> <!-- Using DaisyUI primary color variable -->
 
         </svg>
       </div>
