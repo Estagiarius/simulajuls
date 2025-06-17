@@ -22,7 +22,14 @@ Atualmente, as seguintes simulações estão implementadas:
     *   Observe a mudança de cor com indicadores como Fenolftaleína ou Azul de Bromotimol.
     *   Acesse em: `http://localhost:5173/experiments/chemistry/acid-base` (após iniciar os servidores)
 
-2.  **Física: Lançamento Oblíquo**
+2.  **Química: Curva de Titulação Ácido-Base**
+    *   Simula uma curva de titulação ácido-base, permitindo configurar um analito (ácido/base, forte/fraco com Ka/Kb) e um titulante (ácido/base forte).
+    *   Permite definir concentrações, volumes, e o intervalo de adição do titulante.
+    *   Visualiza a variação do pH em função do volume de titulante adicionado através de um gráfico SVG.
+    *   Mostra os parâmetros utilizados na simulação e mensagens do backend.
+    *   Acesse em: `http://localhost:5173/experiments/chemistry/acid-base-titration`
+
+3.  **Física: Lançamento Oblíquo**
     *   Defina a velocidade inicial, ângulo de lançamento, altura inicial (opcional) e gravidade (opcional) de um projétil.
     *   **Unidades de Entrada:**
         *   Velocidade Inicial: Pode ser fornecida em "m/s" (padrão), "km/h", "ft/s", ou "mph".
@@ -36,17 +43,10 @@ Atualmente, as seguintes simulações estão implementadas:
     *   Visualize a trajetória, alcance máximo, altura máxima e tempo total de voo, com unidades selecionadas.
     *   Acesse em: `http://localhost:5173/experiments/physics/projectile-launch`
 
-3.  **Biologia: Genética Mendeliana (Cruzamento Monoíbrido)**
+4.  **Biologia: Genética Mendeliana (Cruzamento Monoíbrido)**
     *   Realize um cruzamento genético simples informando os genótipos dos pais para um gene com dois alelos.
     *   Observe o Quadro de Punnett resultante e as proporções genotípicas e fenotípicas da prole.
     *   Acesse em: `http://localhost:5173/experiments/biology/mendelian-genetics`
-
-4.  **Química: Curva de Titulação Ácido-Base**
-    *   Simula uma curva de titulação ácido-base, permitindo configurar um analito (ácido/base, forte/fraco com Ka/Kb) e um titulante (ácido/base forte).
-    *   Permite definir concentrações, volumes, e o intervalo de adição do titulante.
-    *   Visualiza a variação do pH em função do volume de titulante adicionado através de um gráfico SVG.
-    *   Mostra os parâmetros utilizados na simulação e mensagens do backend.
-    *   Acesse em: `http://localhost:5173/experiments/chemistry/acid-base-titration`
 
 ## Automated Execution (Recommended)
 
