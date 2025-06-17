@@ -356,7 +356,7 @@
     {/if}
 
     {#if simulationResults && !isLoading && !errorMessage}
-      <div class="mt-4 space-y-6"> {/* Increased spacing for better readability */}
+      <div class="mt-4 space-y-6">
         {#if simulationResults.message}
           <div class="alert alert-info shadow-lg">
             <div>
