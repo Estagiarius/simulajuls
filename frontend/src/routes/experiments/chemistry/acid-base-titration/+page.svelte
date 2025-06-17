@@ -182,11 +182,11 @@
 
       if (!response.ok) {
         let errorData;
+        const responseText = await response.text(); // Read body once as text
         try {
-          errorData = await response.json();
+          errorData = JSON.parse(responseText); // Try to parse as JSON
         } catch (e) {
-          const textError = await response.text();
-          errorData = { detail: textError || response.statusText };
+          errorData = { detail: responseText || response.statusText }; // Fallback to text
         }
         errorMessage = `Erro ${response.status}: ${errorData.detail || 'Ocorreu um erro desconhecido.'}`;
         if (errorData.errors) {
