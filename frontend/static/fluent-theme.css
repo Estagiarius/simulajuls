@@ -35,6 +35,20 @@
 
   /* System Colors */
   --color-text-error: #d83b01; /* Fluent error red */
+  --color-background-error: #fdf4f4;
+  --color-border-error: #d83b01;
+
+  --color-text-success: #0f5132;
+  --color-background-success: #d1e7dd;
+  --color-border-success: #0f5132;
+
+  --color-text-info: #004085;
+  --color-background-info: #cfe2ff;
+  --color-border-info: #004085;
+
+  --color-text-warning: #664d03;
+  --color-background-warning: #fff3cd;
+  --color-border-warning: #ffc107;
 
   /* Spacing Unit */
   --spacing-unit: 8px;
@@ -107,4 +121,48 @@ p, span, div { /* Apply default body font size to common text containers if not 
 
 small, .fluent-caption {
     font-size: var(--font-size-caption);
+}
+
+/* Dark Theme Overrides */
+html[data-theme="dark"] {
+  --color-neutral-background: #212121; /* Darker grey for page background */
+  --color-neutral-layer-1: #2c2c2c;    /* Dark grey for card/surface backgrounds */
+  --color-neutral-layer-2: #383838;    /* Slightly lighter dark grey for hover or subtle layers */
+  --color-neutral-stroke-default: #555555; /* Lighter grey for border color */
+  --color-neutral-stroke-strong: #777777;  /* Even lighter grey for stronger border, secondary text */
+
+  --color-text-primary: #f0f0f0;       /* Light grey for primary text */
+  --color-text-secondary: #b0b0b0;     /* Medium light grey for secondary text */
+  --color-text-disabled: #6a6a6a;      /* Darker grey for disabled text */
+
+  --color-accent-primary: #2692e7; /* Brighter blue for dark mode */
+  --color-accent-primary-hover: #4caeff;
+  --color-accent-primary-active: #1a75c3;
+  /* --color-text-on-accent: #ffffff; /* Stays white */
+
+  /* System Semantic Colors (Dark Theme) */
+  --color-text-error: #ff6666; /* Brighter red for dark mode - already overridden */
+  --color-background-error: color-mix(in srgb, var(--color-text-error) 15%, var(--color-neutral-layer-1));
+  --color-border-error: #ff6666; /* Match text error for dark */
+
+  --color-text-success: #79d89a; /* Lighter green text */
+  --color-background-success: color-mix(in srgb, #79d89a 15%, var(--color-neutral-layer-1));
+  --color-border-success: #79d89a;
+
+  --color-text-info: #63b0ff;    /* Lighter blue text */
+  --color-background-info: color-mix(in srgb, #63b0ff 15%, var(--color-neutral-layer-1));
+  --color-border-info: #63b0ff;
+
+  --color-text-warning: #ffd761;  /* Lighter yellow text */
+  --color-background-warning: color-mix(in srgb, #ffd761 15%, var(--color-neutral-layer-1));
+  --color-border-warning: #ffd761;
+
+  /* Update shadows to be more subtle on dark backgrounds if needed.
+     Fluent often uses lighter, more diffused shadows in dark theme, or relies less on them.
+     Let's make them slightly less opaque.
+  */
+  --shadow-depth-2: 0 0 2px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.25);
+  --shadow-depth-4: 0 0 2px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.25);
+  --shadow-depth-8: 0 0 2px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.25);
+  --shadow-depth-16: 0 0 2px rgba(0,0,0,0.2), 0 8px 16px rgba(0,0,0,0.25);
 }
