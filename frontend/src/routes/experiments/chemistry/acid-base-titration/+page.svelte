@@ -238,26 +238,26 @@
 
 <main class="container mx-auto p-4 sm:p-6 lg:p-8">
   <div class="mb-6">
-    <a href="/" class="text-primary hover:text-primary-focus transition-colors duration-150 ease-in-out">&larr; Voltar para Experimentos</a>
+    <a href="/" class="fluent-link">&larr; Voltar para Experimentos</a>
   </div>
 
-  <h1 class="text-3xl font-bold text-center my-8 text-primary-700">Curva de Titulação Ácido-Base</h1>
+  <h1 class="text-3xl font-bold text-center my-8">Curva de Titulação Ácido-Base</h1>
 
   <form on:submit|preventDefault={runSimulation} class="space-y-8">
-    <section class="p-6 bg-base-100 shadow-xl rounded-lg">
-      <h2 class="text-2xl font-semibold mb-6 text-base-content border-b pb-2">Parâmetros da Simulação</h2>
+    <section style="background-color: var(--color-neutral-layer-1); box-shadow: var(--shadow-depth-8); border-radius: var(--border-radius-large); padding: var(--spacing-l);">
+      <h2 class="text-2xl font-semibold mb-6 border-b pb-2" style="color: var(--color-text-primary); font-size: var(--font-size-title);">Parâmetros da Simulação</h2>
 
       <!-- Analyte Selection -->
       <div class="mb-6">
-        <span class="block text-lg font-medium text-gray-700 mb-2">Analito (Substância a ser Titulada):</span>
+        <span class="block text-lg font-medium mb-2" style="color: var(--color-text-primary);">Analito (Substância a ser Titulada):</span>
         <div class="flex items-center space-x-4 p-2">
           <label class="label cursor-pointer">
             <input type="radio" name="analyte_type" bind:group={analyte_is_acid} value={true} class="radio radio-primary" />
-            <span class="label-text ml-2">Ácido</span>
+            <span class="label-text ml-2" style="color: var(--color-text-primary);">Ácido</span>
           </label>
           <label class="label cursor-pointer">
             <input type="radio" name="analyte_type" bind:group={analyte_is_acid} value={false} class="radio radio-primary" />
-            <span class="ml-2">Base</span>
+            <span class="label-text ml-2" style="color: var(--color-text-primary);">Base</span>
           </label>
         </div>
       </div>
@@ -266,85 +266,85 @@
       {#if analyte_is_acid}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 border border-base-300 rounded-lg">
           <div>
-            <label for="acid_name" class="label"><span class="label-text">Nome do Ácido:</span></label>
-            <input type="text" id="acid_name" bind:value={acid_name} class="input input-bordered w-full mt-1" placeholder="Ex: HCl" required>
+            <label for="acid_name" class="label"><span class="label-text" style="color: var(--color-text-primary);">Nome do Ácido:</span></label>
+            <input type="text" id="acid_name" bind:value={acid_name} class="fluent-input w-full mt-1" placeholder="Ex: HCl" required>
           </div>
           <div>
-            <label for="acid_concentration" class="label"><span class="label-text">Concentração do Ácido (mol/L):</span></label>
-            <input type="number" step="any" id="acid_concentration" bind:value={acid_concentration} class="input input-bordered w-full mt-1" placeholder="Ex: 0.1" min="0" required>
+            <label for="acid_concentration" class="label"><span class="label-text" style="color: var(--color-text-primary);">Concentração do Ácido (mol/L):</span></label>
+            <input type="number" step="any" id="acid_concentration" bind:value={acid_concentration} class="fluent-input w-full mt-1" placeholder="Ex: 0.1" min="0" required>
           </div>
           <div>
-            <label for="acid_volume" class="label"><span class="label-text">Volume do Ácido (mL):</span></label>
-            <input type="number" step="any" id="acid_volume" bind:value={acid_volume} class="input input-bordered w-full mt-1" placeholder="Ex: 50" min="0" required>
+            <label for="acid_volume" class="label"><span class="label-text" style="color: var(--color-text-primary);">Volume do Ácido (mL):</span></label>
+            <input type="number" step="any" id="acid_volume" bind:value={acid_volume} class="fluent-input w-full mt-1" placeholder="Ex: 50" min="0" required>
           </div>
           <div>
-            <label for="acid_ka" class="label"><span class="label-text">Constante de Acidez (Ka) (opcional):</span></label>
-            <input type="text" id="acid_ka" bind:value={acid_ka} class="input input-bordered w-full mt-1" placeholder="Ex: 1.8e-5 (para ácido fraco)">
+            <label for="acid_ka" class="label"><span class="label-text" style="color: var(--color-text-primary);">Constante de Acidez (Ka) (opcional):</span></label>
+            <input type="text" id="acid_ka" bind:value={acid_ka} class="fluent-input w-full mt-1" placeholder="Ex: 1.8e-5 (para ácido fraco)">
           </div>
         </div>
       {:else}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 border border-base-300 rounded-lg">
           <div>
-            <label for="base_name" class="label"><span class="label-text">Nome da Base:</span></label>
-            <input type="text" id="base_name" bind:value={base_name} class="input input-bordered w-full mt-1" placeholder="Ex: NaOH" required>
+            <label for="base_name" class="label"><span class="label-text" style="color: var(--color-text-primary);">Nome da Base:</span></label>
+            <input type="text" id="base_name" bind:value={base_name} class="fluent-input w-full mt-1" placeholder="Ex: NaOH" required>
           </div>
           <div>
-            <label for="base_concentration" class="label"><span class="label-text">Concentração da Base (mol/L):</span></label>
-            <input type="number" step="any" id="base_concentration" bind:value={base_concentration} class="input input-bordered w-full mt-1" placeholder="Ex: 0.1" min="0" required>
+            <label for="base_concentration" class="label"><span class="label-text" style="color: var(--color-text-primary);">Concentração da Base (mol/L):</span></label>
+            <input type="number" step="any" id="base_concentration" bind:value={base_concentration} class="fluent-input w-full mt-1" placeholder="Ex: 0.1" min="0" required>
           </div>
           <div>
-            <label for="base_volume" class="label"><span class="label-text">Volume da Base (mL):</span></label>
-            <input type="number" step="any" id="base_volume" bind:value={base_volume} class="input input-bordered w-full mt-1" placeholder="Ex: 50" min="0" required>
+            <label for="base_volume" class="label"><span class="label-text" style="color: var(--color-text-primary);">Volume da Base (mL):</span></label>
+            <input type="number" step="any" id="base_volume" bind:value={base_volume} class="fluent-input w-full mt-1" placeholder="Ex: 50" min="0" required>
           </div>
           <div>
-            <label for="base_kb" class="label"><span class="label-text">Constante de Basicidade (Kb) (opcional):</span></label>
-            <input type="text" id="base_kb" bind:value={base_kb} class="input input-bordered w-full mt-1" placeholder="Ex: 1.8e-5 (para base fraca)">
+            <label for="base_kb" class="label"><span class="label-text" style="color: var(--color-text-primary);">Constante de Basicidade (Kb) (opcional):</span></label>
+            <input type="text" id="base_kb" bind:value={base_kb} class="fluent-input w-full mt-1" placeholder="Ex: 1.8e-5 (para base fraca)">
           </div>
         </div>
       {/if}
 
       <!-- Titrant Details -->
       <div class="mb-6 border-t border-base-300 pt-6">
-        <h3 class="text-xl font-semibold text-gray-700 mb-3">Titulante</h3>
+        <h3 class="text-xl font-semibold mb-3" style="color: var(--color-text-primary); font-size: var(--font-size-subheader);">Titulante</h3>
         <div class="form-control mb-4">
           <label class="label cursor-pointer">
-            <span class="label-text">Titulante é um ácido?</span>
+            <span class="label-text" style="color: var(--color-text-primary);">Titulante é um ácido?</span>
             <input type="checkbox" bind:checked={titrant_is_acid} class="checkbox checkbox-primary" />
           </label>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label for="titrant_name" class="label"><span class="label-text">Nome do Titulante:</span></label>
-            <input type="text" id="titrant_name" bind:value={titrant_name} class="input input-bordered w-full mt-1" placeholder={titrant_is_acid ? "Ex: HCl" : "Ex: NaOH"} required>
+            <label for="titrant_name" class="label"><span class="label-text" style="color: var(--color-text-primary);">Nome do Titulante:</span></label>
+            <input type="text" id="titrant_name" bind:value={titrant_name} class="fluent-input w-full mt-1" placeholder={titrant_is_acid ? "Ex: HCl" : "Ex: NaOH"} required>
           </div>
           <div>
-            <label for="titrant_concentration" class="label"><span class="label-text">Concentração do Titulante (mol/L):</span></label>
-            <input type="number" step="any" id="titrant_concentration" bind:value={titrant_concentration} class="input input-bordered w-full mt-1" placeholder="Ex: 0.1" min="0" required>
+            <label for="titrant_concentration" class="label"><span class="label-text" style="color: var(--color-text-primary);">Concentração do Titulante (mol/L):</span></label>
+            <input type="number" step="any" id="titrant_concentration" bind:value={titrant_concentration} class="fluent-input w-full mt-1" placeholder="Ex: 0.1" min="0" required>
           </div>
         </div>
       </div>
 
       <!-- Titration Process Parameters -->
       <div class="mb-6 border-t border-base-300 pt-6">
-        <h3 class="text-xl font-medium text-gray-700 mb-3">Processo de Titulação:</h3>
+        <h3 class="text-xl font-semibold mb-3" style="color: var(--color-text-primary); font-size: var(--font-size-subheader);">Processo de Titulação:</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label for="initial_titrant_volume_ml" class="label"><span class="label-text">Volume Inicial de Titulante (mL):</span></label>
-            <input type="number" step="any" id="initial_titrant_volume_ml" bind:value={initial_titrant_volume_ml} class="input input-bordered w-full mt-1" min="0" required>
+            <label for="initial_titrant_volume_ml" class="label"><span class="label-text" style="color: var(--color-text-primary);">Volume Inicial de Titulante (mL):</span></label>
+            <input type="number" step="any" id="initial_titrant_volume_ml" bind:value={initial_titrant_volume_ml} class="fluent-input w-full mt-1" min="0" required>
           </div>
           <div>
-            <label for="final_titrant_volume_ml" class="label"><span class="label-text">Volume Final de Titulante (mL):</span></label>
-            <input type="number" step="any" id="final_titrant_volume_ml" bind:value={final_titrant_volume_ml} class="input input-bordered w-full mt-1" placeholder="Ex: 100" min="0" required>
+            <label for="final_titrant_volume_ml" class="label"><span class="label-text" style="color: var(--color-text-primary);">Volume Final de Titulante (mL):</span></label>
+            <input type="number" step="any" id="final_titrant_volume_ml" bind:value={final_titrant_volume_ml} class="fluent-input w-full mt-1" placeholder="Ex: 100" min="0" required>
           </div>
           <div>
-            <label for="volume_increment_ml" class="label"><span class="label-text">Incremento de Volume (mL):</span></label>
-            <input type="number" step="any" id="volume_increment_ml" bind:value={volume_increment_ml} class="input input-bordered w-full mt-1" placeholder="Ex: 1" min="0.0000000001" required>
+            <label for="volume_increment_ml" class="label"><span class="label-text" style="color: var(--color-text-primary);">Incremento de Volume (mL):</span></label>
+            <input type="number" step="any" id="volume_increment_ml" bind:value={volume_increment_ml} class="fluent-input w-full mt-1" placeholder="Ex: 1" min="0.0000000001" required>
           </div>
         </div>
       </div>
 
       <div class="text-center mt-8">
-        <button type="submit" class="btn btn-primary btn-lg" disabled={isLoading}>
+        <button type="submit" class="fluent-button" disabled={isLoading}>
           {#if isLoading}
             <span class="loading loading-spinner"></span>
             Simulando...
@@ -357,12 +357,12 @@
   </form>
 
   {#if isLoading || errorMessage || simulationResults}
-  <section class="mb-8 p-6 bg-base-100 shadow-md rounded-lg">
-    <h2 class="text-2xl font-semibold mb-6 text-base-content border-b pb-2">Resultados da Simulação</h2>
+  <section class="mb-8" style="background-color: var(--color-neutral-layer-1); box-shadow: var(--shadow-depth-4); border-radius: var(--border-radius-large); padding: var(--spacing-l);">
+    <h2 class="text-2xl font-semibold mb-6 border-b pb-2" style="color: var(--color-text-primary); font-size: var(--font-size-title);">Resultados da Simulação</h2>
 
     {#if isLoading}
       <div class="text-center my-4 p-4">
-        <span class="loading loading-lg loading-dots text-primary"></span>
+        <span class="loading loading-lg loading-dots"></span>
         <p class="text-lg text-primary-focus mt-2">Calculando...</p>
       </div>
     {/if}
@@ -387,76 +387,76 @@
 
         {#if simulationResults.parameters_used}
           <div class="p-4 bg-base-200 rounded-lg shadow">
-            <h3 class="text-xl font-semibold text-base-content mb-4">Parâmetros Utilizados:</h3>
+            <h3 class="text-xl font-semibold mb-4" style="color: var(--color-text-primary); font-size: var(--font-size-subheader);">Parâmetros Utilizados:</h3>
             <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-sm">
               {#if simulationResults.parameters_used.analyte_is_acid}
-                <div class="col-span-full mb-2 text-lg font-medium text-base-content">Analito (Ácido):</div>
+                <div class="col-span-full mb-2 text-lg font-medium" style="color: var(--color-text-primary);">Analito (Ácido):</div>
                 <div>
-                  <dt class="font-semibold text-base-content/70">Nome:</dt>
-                  <dd class="text-base-content">{simulationResults.parameters_used.acid_name || 'N/A'}</dd>
+                  <dt class="font-semibold" style="color: var(--color-text-secondary);">Nome:</dt>
+                  <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.acid_name || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt class="font-semibold text-base-content/70">Concentração:</dt>
-                  <dd class="text-base-content">{simulationResults.parameters_used.acid_concentration} mol/L</dd>
+                  <dt class="font-semibold" style="color: var(--color-text-secondary);">Concentração:</dt>
+                  <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.acid_concentration} mol/L</dd>
                 </div>
                 <div>
-                  <dt class="font-semibold text-base-content/70">Volume:</dt>
-                  <dd class="text-base-content">{simulationResults.parameters_used.acid_volume} mL</dd>
+                  <dt class="font-semibold" style="color: var(--color-text-secondary);">Volume:</dt>
+                  <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.acid_volume} mL</dd>
                 </div>
                 {#if simulationResults.parameters_used.acid_ka}
                   <div>
-                    <dt class="font-semibold text-base-content/70">Ka:</dt>
-                    <dd class="text-base-content">{simulationResults.parameters_used.acid_ka}</dd>
+                    <dt class="font-semibold" style="color: var(--color-text-secondary);">Ka:</dt>
+                    <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.acid_ka}</dd>
                   </div>
                 {/if}
               {:else}
-                <div class="col-span-full mb-2 text-lg font-medium text-base-content">Analito (Base):</div>
+                <div class="col-span-full mb-2 text-lg font-medium" style="color: var(--color-text-primary);">Analito (Base):</div>
                 <div>
-                  <dt class="font-semibold text-base-content/70">Nome:</dt>
-                  <dd class="text-gray-800">{simulationResults.parameters_used.base_name || 'N/A'}</dd>
+                  <dt class="font-semibold" style="color: var(--color-text-secondary);">Nome:</dt>
+                  <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.base_name || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt class="font-semibold text-gray-600">Concentração:</dt>
-                  <dd class="text-base-content">{simulationResults.parameters_used.base_concentration} mol/L</dd>
+                  <dt class="font-semibold" style="color: var(--color-text-secondary);">Concentração:</dt>
+                  <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.base_concentration} mol/L</dd>
                 </div>
                 <div>
-                  <dt class="font-semibold text-gray-600">Volume:</dt>
-                  <dd class="text-base-content">{simulationResults.parameters_used.base_volume} mL</dd>
+                  <dt class="font-semibold" style="color: var(--color-text-secondary);">Volume:</dt>
+                  <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.base_volume} mL</dd>
                 </div>
                 {#if simulationResults.parameters_used.base_kb}
                   <div>
-                    <dt class="font-semibold text-gray-600">Kb:</dt>
-                    <dd class="text-base-content">{simulationResults.parameters_used.base_kb}</dd>
+                    <dt class="font-semibold" style="color: var(--color-text-secondary);">Kb:</dt>
+                    <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.base_kb}</dd>
                   </div>
                 {/if}
               {/if}
 
-              <div class="col-span-full mt-3 mb-1 text-lg font-medium text-base-content">Titulante:</div>
+              <div class="col-span-full mt-3 mb-1 text-lg font-medium" style="color: var(--color-text-primary);">Titulante:</div>
               <div>
-                <dt class="font-semibold text-gray-600">Tipo:</dt>
-                <dd class="text-base-content">{simulationResults.parameters_used.titrant_is_acid ? 'Ácido' : 'Base'}</dd>
+                <dt class="font-semibold" style="color: var(--color-text-secondary);">Tipo:</dt>
+                <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.titrant_is_acid ? 'Ácido' : 'Base'}</dd>
               </div>
               <div>
-                <dt class="font-semibold text-gray-600">Nome:</dt>
-                <dd class="text-base-content">{simulationResults.parameters_used.titrant_name || 'N/A'}</dd>
+                <dt class="font-semibold" style="color: var(--color-text-secondary);">Nome:</dt>
+                <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.titrant_name || 'N/A'}</dd>
               </div>
               <div>
-                <dt class="font-semibold text-gray-600">Concentração:</dt>
-                <dd class="text-base-content">{simulationResults.parameters_used.titrant_concentration} mol/L</dd>
+                <dt class="font-semibold" style="color: var(--color-text-secondary);">Concentração:</dt>
+                <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.titrant_concentration} mol/L</dd>
               </div>
 
-              <div class="col-span-full mt-3 mb-1 text-lg font-medium text-base-content">Processo de Titulação:</div>
+              <div class="col-span-full mt-3 mb-1 text-lg font-medium" style="color: var(--color-text-primary);">Processo de Titulação:</div>
               <div>
-                <dt class="font-semibold text-gray-600">Volume Inicial:</dt>
-                <dd class="text-base-content">{simulationResults.parameters_used.initial_titrant_volume_ml} mL</dd>
+                <dt class="font-semibold" style="color: var(--color-text-secondary);">Volume Inicial:</dt>
+                <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.initial_titrant_volume_ml} mL</dd>
               </div>
               <div>
-                <dt class="font-semibold text-gray-600">Volume Final:</dt>
-                <dd class="text-gray-800">{simulationResults.parameters_used.final_titrant_volume_ml} mL</dd>
+                <dt class="font-semibold" style="color: var(--color-text-secondary);">Volume Final:</dt>
+                <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.final_titrant_volume_ml} mL</dd>
               </div>
               <div>
-                <dt class="font-semibold text-gray-600">Incremento:</dt>
-                <dd class="text-base-content">{simulationResults.parameters_used.volume_increment_ml} mL</dd>
+                <dt class="font-semibold" style="color: var(--color-text-secondary);">Incremento:</dt>
+                <dd style="color: var(--color-text-primary);">{simulationResults.parameters_used.volume_increment_ml} mL</dd>
               </div>
             </dl>
           </div>
@@ -475,36 +475,36 @@
     <!-- The pre tag for raw JSON is now definitely removed/disabled by the logic above -->
   </section>
 
-  <section class="mb-8 p-6 bg-white shadow-md rounded-lg">
-    <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-2">Gráfico da Curva de Titulação</h2>
+  <section class="mb-8" style="background-color: var(--color-neutral-layer-1); box-shadow: var(--shadow-depth-4); border-radius: var(--border-radius-large); padding: var(--spacing-l);">
+    <h2 class="text-2xl font-semibold mb-6 border-b pb-2" style="color: var(--color-text-primary); font-size: var(--font-size-title);">Gráfico da Curva de Titulação</h2>
     {#if titrationCurveData && titrationCurveData.length > 0}
-      <div class="chart-container bg-base-100 p-4 rounded-lg shadow-inner" role="figure" aria-labelledby="chart-title"> <!-- Added bg-base-100, p-4, rounded-lg, shadow-inner -->
+      <div class="chart-container p-4 rounded-lg" role="figure" aria-labelledby="chart-title" style="padding: var(--spacing-m);"> <!-- Removed bg-base-100, shadow-inner. Ensured padding with var. -->
         <svg {width} {height} viewBox="0 0 {svgWidth} {svgHeight}" preserveAspectRatio="xMidYMin meet" aria-labelledby="chart-title-svg" aria-describedby="chart-desc-svg" class="mx-auto"> <!-- Added mx-auto to center if width is constrained -->
           <title id="chart-title-svg">Curva de Titulação Ácido-Base</title>
           <desc id="chart-desc-svg">Gráfico de pH em função do volume de titulante adicionado.</desc>
 
           <!-- Y Axis (pH) -->
-          <line x1={padding.left} y1={padding.top} x2={padding.left} y2={svgHeight - padding.bottom} stroke="currentColor" />
+          <line x1={padding.left} y1={padding.top} x2={padding.left} y2={svgHeight - padding.bottom} stroke="var(--color-neutral-stroke-default)" />
           {#each yAxisTicks as tick}
             <g class="tick">
-              <line x1={padding.left - 5} y1={tick.y} x2={padding.left} y2={tick.y} stroke="currentColor" />
-              <text x={padding.left - 10} y={tick.y + 4} text-anchor="end" font-size="10" class="fill-current text-xs">{tick.label}</text>
+              <line x1={padding.left - 5} y1={tick.y} x2={padding.left} y2={tick.y} stroke="var(--color-neutral-stroke-default)" />
+              <text x={padding.left - 10} y={tick.y + 4} text-anchor="end" font-size="10" class="text-xs">{tick.label}</text> <!-- fill-current removed, CSS will handle -->
             </g>
           {/each}
-          <text x={padding.left - 35} y={padding.top + (svgHeight - padding.top - padding.bottom) / 2} transform="rotate(-90, {padding.left - 35}, {padding.top + (svgHeight - padding.top - padding.bottom) / 2})" text-anchor="middle" font-size="12" class="fill-current font-semibold">pH</text>
+          <text x={padding.left - 35} y={padding.top + (svgHeight - padding.top - padding.bottom) / 2} transform="rotate(-90, {padding.left - 35}, {padding.top + (svgHeight - padding.top - padding.bottom) / 2})" text-anchor="middle" font-size="12" class="font-semibold">pH</text> <!-- fill-current removed -->
 
           <!-- X Axis (Volume) -->
-          <line x1={padding.left} y1={svgHeight - padding.bottom} x2={svgWidth - padding.right} y2={svgHeight - padding.bottom} stroke="currentColor" />
+          <line x1={padding.left} y1={svgHeight - padding.bottom} x2={svgWidth - padding.right} y2={svgHeight - padding.bottom} stroke="var(--color-neutral-stroke-default)" />
           {#each xAxisTicks as tick}
             <g class="tick">
-              <line x1={tick.x} y1={svgHeight - padding.bottom} x2={tick.x} y2={svgHeight - padding.bottom + 5} stroke="currentColor" />
-              <text x={tick.x} y={svgHeight - padding.bottom + 15} text-anchor="middle" font-size="10" class="fill-current text-xs">{tick.label}</text>
+              <line x1={tick.x} y1={svgHeight - padding.bottom} x2={tick.x} y2={svgHeight - padding.bottom + 5} stroke="var(--color-neutral-stroke-default)" />
+              <text x={tick.x} y={svgHeight - padding.bottom + 15} text-anchor="middle" font-size="10" class="text-xs">{tick.label}</text> <!-- fill-current removed -->
             </g>
           {/each}
-          <text x={padding.left + (svgWidth - padding.left - padding.right) / 2} y={svgHeight - padding.bottom + 35} text-anchor="middle" font-size="12" class="fill-current font-semibold">Volume do Titulante Adicionado (mL)</text>
+          <text x={padding.left + (svgWidth - padding.left - padding.right) / 2} y={svgHeight - padding.bottom + 35} text-anchor="middle" font-size="12" class="font-semibold">Volume do Titulante Adicionado (mL)</text> <!-- fill-current removed -->
 
           <!-- Titration Curve Path -->
-          <path d={svgPathD} fill="none" stroke="red" stroke-width="2" /> <!-- Using DaisyUI primary color variable -->
+          <path d={svgPathD} fill="none" stroke="var(--color-accent-primary)" stroke-width="2" />
 
         </svg>
       </div>
@@ -551,5 +551,158 @@
   path {
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+  .fluent-link {
+    color: var(--color-accent-primary);
+    text-decoration: none;
+  }
+  .fluent-link:hover {
+    color: var(--color-accent-primary-hover);
+    text-decoration: underline;
+  }
+  .fluent-input {
+    background-color: var(--color-neutral-layer-1);
+    border: 1px solid var(--color-neutral-stroke-default);
+    color: var(--color-text-primary);
+    padding: var(--spacing-s) var(--spacing-m); /* Approx 8px 16px */
+    border-radius: var(--border-radius-medium);
+    width: 100%; /* Keep width if specified by .w-full */
+  }
+  .fluent-input:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 1px var(--color-accent-primary); /* Simulates Fluent focus ring */
+  }
+  /* Adjust placeholder color if needed */
+  .fluent-input::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+  }
+  /* Fluent Radio Buttons */
+  input[type="radio"].radio-primary:checked {
+    border-color: var(--color-accent-primary); /* Outer ring */
+  }
+  input[type="radio"].radio-primary:checked::after { /* Inner dot */
+    background-color: var(--color-accent-primary);
+  }
+  /* Fluent Checkboxes */
+  input[type="checkbox"].checkbox-primary:checked {
+    background-color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+  }
+  /* Consider default state border colors too if they clash */
+  input[type="radio"].radio-primary {
+      border-color: var(--color-neutral-stroke-default);
+  }
+  input[type="checkbox"].checkbox-primary {
+      border-color: var(--color-neutral-stroke-default);
+  }
+  .fluent-button {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border: 1px solid transparent;
+    padding: var(--spacing-s) var(--spacing-m); /* Default size */
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    min-width: 120px; /* Ensure a decent minimum width */
+  }
+
+  .fluent-button:hover {
+    background-color: var(--color-accent-primary-hover);
+    box-shadow: var(--shadow-depth-2);
+  }
+
+  .fluent-button:active {
+    background-color: var(--color-accent-primary-active);
+    box-shadow: none;
+  }
+
+  .fluent-button:disabled {
+    background-color: var(--color-neutral-stroke-default); /* Example disabled style */
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .loading { /* General loading class */
+    color: var(--color-accent-primary); /* Many DaisyUI spinners use text color */
+  }
+
+  /* Base Alert Style (structural from DaisyUI, colors from Fluent) */
+  .alert {
+    border-radius: var(--border-radius-medium);
+    padding: var(--spacing-m);
+    border: 1px solid transparent;
+    /* DaisyUI handles display:flex and icon spacing, so we mainly override colors/fonts */
+  }
+
+  /* Fluent Error Alert */
+  .alert.alert-error {
+    background-color: color-mix(in srgb, var(--color-text-error) 10%, var(--color-neutral-layer-1)); /* Light error background */
+    color: var(--color-text-error);
+    border-color: var(--color-text-error);
+  }
+  .alert.alert-error svg { /* Assuming SVG icons are used */
+    stroke: var(--color-text-error);
+  }
+  .alert.alert-error strong { /* Make bold text within error more prominent */
+      color: var(--color-text-error);
+  }
+
+  /* Fluent Info Alert */
+  .alert.alert-info {
+    background-color: color-mix(in srgb, var(--color-accent-primary) 10%, var(--color-neutral-layer-1)); /* Light info blue */
+    color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+  }
+  .alert.alert-info svg {
+    stroke: var(--color-accent-primary);
+  }
+
+  /* Fluent Success Alert */
+  .alert.alert-success {
+    /* Define a success color, e.g., a Fluent green */
+    --color-success-primary: #107c10; /* Example Fluent Green */
+    background-color: color-mix(in srgb, var(--color-success-primary) 10%, var(--color-neutral-layer-1));
+    color: var(--color-success-primary);
+    border-color: var(--color-success-primary);
+  }
+  .alert.alert-success svg {
+    stroke: var(--color-success-primary);
+  }
+  .alert.alert-success strong {
+      color: var(--color-success-primary);
+  }
+
+  /* Fluent Warning Alert */
+  .alert.alert-warning {
+    /* Define a warning color, e.g., a Fluent yellow/orange */
+    --color-warning-primary: #fce100; /* Example Fluent Yellow (text might need to be dark) */
+    --color-warning-text: #7A5B00; /* Darker text for yellow background */
+    background-color: color-mix(in srgb, var(--color-warning-primary) 20%, var(--color-neutral-layer-1));
+    color: var(--color-warning-text);
+    border-color: var(--color-warning-primary);
+  }
+  .alert.alert-warning svg {
+    stroke: var(--color-warning-text); /* Or var(--color-warning-primary) if it looks better */
+  }
+
+  .chart-container svg text {
+    fill: var(--color-text-primary); /* Default text color for chart text */
+    font-family: var(--font-family-base); /* Ensure Fluent font */
+  }
+  .chart-container svg .tick text { /* More specific for tick labels if needed */
+    fill: var(--color-text-secondary);
+    font-size: 0.75rem; /* Corresponds to --font-size-caption or text-xs */
+  }
+  .chart-container svg .font-semibold { /* For axis titles like pH, Volume */
+      font-weight: var(--font-weight-semibold);
+      fill: var(--color-text-primary);
   }
 </style>
