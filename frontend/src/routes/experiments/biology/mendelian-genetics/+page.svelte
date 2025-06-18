@@ -142,19 +142,19 @@
 </svelte:head>
 
 <main class="container">
-  <a href="/" class="back-link" use:fade>← Voltar para Seleção de Experimentos</a>
+  <a href="/" class="fluent-link" use:fade>← Voltar para Seleção de Experimentos</a>
 
   <h1>{experimentDetails.name}</h1>
   <p class="description">{experimentDetails.description}</p>
 
   <form on:submit|preventDefault={startSimulation} class="simulation-form">
-    <h2>Configurar Cruzamento Genético</h2>
+    <h2 style="text-align: center; margin-bottom: var(--spacing-l); color: var(--color-text-primary); font-size: var(--font-size-title); font-weight: var(--font-weight-semibold);">Configurar Cruzamento Genético</h2>
 
     <div class="form-grid">
       <fieldset>
         <legend>Progenitor 1</legend>
         <label for="parent1_genotype">Genótipo do Progenitor 1 (ex: AA, Aa, aa):</label>
-        <input type="text" id="parent1_genotype" bind:value={params.parent1_genotype} maxlength="2" required>
+        <input type="text" id="parent1_genotype" bind:value={params.parent1_genotype} class="fluent-input" maxlength="2" required>
         {#if parent1GenotypeError}
           <small class="input-error">{parent1GenotypeError}</small>
         {/if}
@@ -163,7 +163,7 @@
       <fieldset>
         <legend>Progenitor 2</legend>
         <label for="parent2_genotype">Genótipo do Progenitor 2 (ex: AA, Aa, aa):</label>
-        <input type="text" id="parent2_genotype" bind:value={params.parent2_genotype} maxlength="2" required>
+        <input type="text" id="parent2_genotype" bind:value={params.parent2_genotype} class="fluent-input" maxlength="2" required>
         {#if parent2GenotypeError}
           <small class="input-error">{parent2GenotypeError}</small>
         {/if}
@@ -175,30 +175,30 @@
       <div class="form-grid">
         <div>
           <label for="dominant_allele">Alelo Dominante:</label>
-          <input type="text" id="dominant_allele" bind:value={params.dominant_allele} maxlength="1" required>
+          <input type="text" id="dominant_allele" bind:value={params.dominant_allele} class="fluent-input" maxlength="1" required>
           {#if dominantAlleleError}
             <small class="input-error">{dominantAlleleError}</small>
           {/if}
         </div>
         <div>
           <label for="recessive_allele">Alelo Recessivo:</label>
-          <input type="text" id="recessive_allele" bind:value={params.recessive_allele} maxlength="1" required>
+          <input type="text" id="recessive_allele" bind:value={params.recessive_allele} class="fluent-input" maxlength="1" required>
           {#if recessiveAlleleError}
             <small class="input-error">{recessiveAlleleError}</small>
           {/if}
         </div>
         <div>
           <label for="dominant_phenotype_description">Descrição do Fenótipo Dominante:</label>
-          <input type="text" id="dominant_phenotype_description" bind:value={params.dominant_phenotype_description}>
+          <input type="text" id="dominant_phenotype_description" bind:value={params.dominant_phenotype_description} class="fluent-input">
         </div>
         <div>
           <label for="recessive_phenotype_description">Descrição do Fenótipo Recessivo:</label>
-          <input type="text" id="recessive_phenotype_description" bind:value={params.recessive_phenotype_description}>
+          <input type="text" id="recessive_phenotype_description" bind:value={params.recessive_phenotype_description} class="fluent-input">
         </div>
       </div>
     </fieldset>
 
-    <button type="submit" class="submit-button" disabled={isLoading || parent1GenotypeError || parent2GenotypeError || !!dominantAlleleError || !!recessiveAlleleError}>
+    <button type="submit" class="fluent-button" disabled={isLoading || parent1GenotypeError || parent2GenotypeError || !!dominantAlleleError || !!recessiveAlleleError}>
       {#if isLoading}
         Calculando Proporções...
       {:else}
@@ -209,10 +209,10 @@
 
   {#if simulationResult}
     <section class="results-section" transition:fade={{ duration: 300 }}>
-      <h2>Resultados do Cruzamento Genético</h2>
+      <h2 style="text-align: center; margin-bottom: var(--spacing-l); color: var(--color-text-primary); font-size: var(--font-size-title); font-weight: var(--font-weight-semibold);">Resultados do Cruzamento Genético</h2>
 
       <div class="punnett-section">
-        <h3>Quadro de Punnett:</h3>
+        <h3 style="color: var(--color-text-primary); font-size: var(--font-size-subheader); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-s);">Quadro de Punnett:</h3>
         <table class="punnett-square">
           <thead>
             <tr>
@@ -237,7 +237,7 @@
 
       <div class="proportions-grid">
         <div class="genotype-proportions">
-          <h3>Proporções Genotípicas da Prole:</h3>
+          <h3 style="color: var(--color-text-primary); font-size: var(--font-size-subheader); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-s); border-bottom: 1px solid var(--color-neutral-stroke-default); padding-bottom: var(--spacing-xs);">Proporções Genotípicas da Prole:</h3>
           <ul>
             {#each simulationResult.offspring_genotypes as geno}
               <li>
@@ -249,7 +249,7 @@
         </div>
 
         <div class="phenotype-proportions">
-          <h3>Proporções Fenotípicas da Prole:</h3>
+          <h3 style="color: var(--color-text-primary); font-size: var(--font-size-subheader); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-s); border-bottom: 1px solid var(--color-neutral-stroke-default); padding-bottom: var(--spacing-xs);">Proporções Fenotípicas da Prole:</h3>
           <ul>
             {#each simulationResult.offspring_phenotypes as pheno}
               <li>
@@ -262,7 +262,7 @@
       </div>
 
       <div class="parameters-used">
-          <h4>Parâmetros Utilizados na Simulação:</h4>
+          <h4 style="color: var(--color-text-primary); font-size: var(--font-size-subheader); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-s);">Parâmetros Utilizados na Simulação:</h4>
           <p>Progenitor 1: {simulationResult.parameters_used.parent1_genotype}, Progenitor 2: {simulationResult.parameters_used.parent2_genotype}</p>
           <p>Alelo Dominante: {simulationResult.parameters_used.dominant_allele} ({simulationResult.parameters_used.dominant_phenotype_description})</p>
           <p>Alelo Recessivo: {simulationResult.parameters_used.recessive_allele} ({simulationResult.parameters_used.recessive_phenotype_description})</p>
@@ -271,131 +271,227 @@
   {/if}
 
   {#if error}
-    <p class="error-message" use:fade>Erro: {error}</p>
+    <p class="fluent-alert-error" use:fade>Erro: {error}</p>
   {/if}
 
 </main>
 
 <style>
-  :global(body) {font-family: 'Roboto', sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6;}
-  .container {max-width: 800px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
-  .back-link {display: inline-block; margin-bottom: 20px; color: #2980b9; text-decoration: none;}
-  .back-link:hover {text-decoration: underline;}
-  h1 {color: #2c3e50; text-align: center; margin-bottom: 10px;}
-  .description {text-align: center; margin-bottom: 30px; color: #555;}
-  .simulation-form h2 {margin-bottom: 20px; text-align: center; color: #34495e;}
-  .form-grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px;}
-  fieldset {border: 1px solid #ddd; border-radius: 6px; padding: 20px; background-color: #fdfdfd; margin-bottom:15px;}
-  legend {font-weight: bold; color: #2980b9; padding: 0 10px;}
-  label {display: block; margin-bottom: 8px; font-weight: 500; color: #444;}
-  input[type="text"], input[type="number"] {
-    width: 100%; padding: 10px; margin-bottom: 5px;
-    border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em;
+  /* :global(body) rule removed */
+  .container {
+    max-width: 900px; /* Fluent width */
+    margin: var(--spacing-l) auto; /* Fluent spacing */
+    padding: var(--spacing-xl); /* Fluent padding */
+    background-color: var(--color-neutral-background); /* Page background */
+    /* Removed border-radius and box-shadow for page background */
   }
-  input[type="text"]:focus, input[type="number"]:focus {
-    border-color: #2980b9; outline: none; box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
+  /* .back-link rule removed, replaced by .fluent-link */
+  .back-link:hover {text-decoration: underline;} /* This would be covered by .fluent-link:hover */
+  h1 {
+    text-align: center;
+    margin-bottom: var(--spacing-s);
+    /* Color and font are from fluent-theme.css global h1 */
   }
+  .description {
+    text-align: center;
+    margin-bottom: var(--spacing-l);
+    color: var(--color-text-secondary);
+    /* Font size from fluent-theme.css global p */
+  }
+  /* .simulation-form h2 rule removed, styles applied inline or via global h2 */
+  .form-grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-m); margin-bottom: var(--spacing-l);}
+  fieldset {
+    border: 1px solid var(--color-neutral-stroke-default);
+    border-radius: var(--border-radius-medium);
+    padding: var(--spacing-l);
+    background-color: var(--color-neutral-layer-1);
+    margin-bottom: var(--spacing-l);
+    box-shadow: var(--shadow-depth-2);
+  }
+  legend {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    padding: 0 var(--spacing-xs);
+    margin-bottom: var(--spacing-m);
+    font-size: var(--font-size-subheader); /* Added for consistency */
+  }
+  label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-primary);
+  }
+  /* input[type="text"], input[type="number"] rules removed, replaced by .fluent-input */
+  /* input[type="text"]:focus, input[type="number"]:focus rules removed */
+
   .definition-fieldset .form-grid div {
-      margin-bottom: 10px;
+      margin-bottom: var(--spacing-s); /* Adjusted spacing */
   }
   .input-error {
     display: block;
-    font-size: 0.85em;
-    color: #d32f2f;
-    margin-top: 2px;
+    font-size: var(--font-size-caption);
+    color: var(--color-text-error);
+    margin-top: var(--spacing-xs);
   }
-  .submit-button {display: block; width: 100%; padding: 12px 20px; background-color: #ADD8E6; color: #333; font-size: 1.1em; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease;}
-  .submit-button:hover:not(:disabled) {background-color: #9BC9E0;}
-  .submit-button:disabled {background-color: #ccc; cursor: not-allowed;}
-  .results-section {margin-top: 30px; padding: 20px; background-color: #e9f5ff; border: 1px solid #ADD8E6; border-radius: 6px;}
-  .results-section h2 {margin-top: 0; color: #2980b9; text-align:center; margin-bottom: 20px;}
-  .error-message {color: #FFA500; background-color: #fff3e0; border: 1px solid #FFA500; padding: 10px; border-radius: 4px; margin-top: 20px;}
+  /* .submit-button rules removed, replaced by .fluent-button */
+  /* .submit-button:hover:not(:disabled) rule removed */
+  /* .submit-button:disabled rule removed */
+  .results-section {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-l);
+    background-color: var(--color-neutral-layer-1);
+    border: none; /* Was 1px solid #ADD8E6 */
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-depth-4);
+  }
+  /* .results-section h2 rule removed, styled inline or via global h2 */
+  /* .error-message rule removed, replaced by .fluent-alert-error */
 
-  /* NOVOS ESTILOS PARA GENÉTICA */
+  /* Updated styles for Genética */
   .punnett-section {
-    margin-bottom: 25px;
+    margin-bottom: var(--spacing-l);
     text-align: center;
   }
-  .punnett-section h3 {
-    margin-bottom: 10px;
-    color: #34495e;
-  }
+  /* .punnett-section h3 rule removed, styled inline or via global h3 */
   .punnett-square {
     margin: 0 auto;
     border-collapse: collapse;
-    border: 2px solid #666;
+    border: 1px solid var(--color-neutral-stroke-default); /* Updated border */
     min-width: 200px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-depth-2); /* Added Fluent shadow */
   }
   .punnett-square th, .punnett-square td {
-    border: 1px solid #999;
-    padding: 10px 15px;
+    border: 1px solid var(--color-neutral-stroke-default); /* Updated border */
+    padding: var(--spacing-s); /* Updated padding */
     text-align: center;
-    font-size: 1.1em;
+    font-size: 1em; /* Kept relative size, can be var(--font-size-body) */
     min-width: 50px;
   }
   .punnett-square th {
-    background-color: #e0e0e0;
-    font-weight: bold;
+    background-color: var(--color-neutral-layer-2); /* Updated background */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
   }
   .punnett-square td {
-    background-color: #f9f9f9;
+    background-color: var(--color-neutral-layer-1); /* Updated background */
+    color: var(--color-text-primary);
   }
   .proportions-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: var(--spacing-l); /* Updated gap */
+    margin-bottom: var(--spacing-l); /* Updated margin */
   }
   .genotype-proportions, .phenotype-proportions {
-    background-color: #f9f9f9;
-    padding: 15px 20px;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
+    background-color: var(--color-neutral-layer-2); /* Updated background */
+    padding: var(--spacing-m); /* Updated padding */
+    border-radius: var(--border-radius-medium); /* Updated radius */
+    border: 1px solid var(--color-neutral-stroke-default); /* Updated border */
   }
-  .genotype-proportions h3, .phenotype-proportions h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    color: #34495e;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 8px;
-  }
+  /* .genotype-proportions h3, .phenotype-proportions h3 rules removed, styled inline or via global h3 */
+
   .genotype-proportions ul, .phenotype-proportions ul {
     list-style: none;
     padding-left: 0;
     margin: 0;
   }
   .genotype-proportions li, .phenotype-proportions li {
-    padding: 6px 0;
-    border-bottom: 1px dashed #eee;
-    font-size: 0.95em;
+    padding: var(--spacing-xs) 0; /* Updated padding */
+    border-bottom: 1px dashed var(--color-neutral-stroke-default); /* Updated border */
+    font-size: var(--font-size-body); /* Updated font size */
   }
   .genotype-proportions li:last-child, .phenotype-proportions li:last-child {
     border-bottom: none;
   }
   .genotype-proportions li strong, .phenotype-proportions li strong {
-    color: #2980b9;
+    color: var(--color-text-primary); /* Was accent, changed to primary */
+    font-weight: var(--font-weight-semibold);
   }
   .genotype-proportions li em, .phenotype-proportions li em {
-    font-size: 0.9em;
-    color: #777;
-    margin-left: 5px;
+    font-size: var(--font-size-caption); /* Updated font size */
+    color: var(--color-text-secondary);
+    margin-left: var(--spacing-xs); /* Updated margin */
   }
   .parameters-used {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #fafafa;
-      border: 1px solid #eee;
-      border-radius: 4px;
-      font-size: 0.9em;
+      margin-top: var(--spacing-l); /* Updated margin */
+      padding: var(--spacing-m); /* Updated padding */
+      background-color: var(--color-neutral-layer-2); /* Updated background */
+      border: 1px solid var(--color-neutral-stroke-default); /* Updated border */
+      border-radius: var(--border-radius-medium); /* Updated radius */
+      font-size: var(--font-size-body); /* Updated font size */
   }
-  .parameters-used h4 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: #34495e;
-  }
+  /* .parameters-used h4 rule removed, styled inline or via global h4 */
   .parameters-used p {
-      margin: 5px 0;
-      color: #555;
+      margin: var(--spacing-xs) 0; /* Updated margin */
+      color: var(--color-text-secondary);
   }
+
+  /* Fluent CSS Definitions Start */
+  .fluent-link {
+    color: var(--color-accent-primary);
+    text-decoration: none;
+  }
+  .fluent-link:hover {
+    color: var(--color-accent-primary-hover);
+    text-decoration: underline;
+  }
+
+  .fluent-input {
+    background-color: var(--color-neutral-layer-1);
+    border: 1px solid var(--color-neutral-stroke-default);
+    color: var(--color-text-primary);
+    padding: var(--spacing-s) var(--spacing-m);
+    border-radius: var(--border-radius-medium);
+    width: 100%;
+    box-sizing: border-box; /* Ensure padding doesn't expand width */
+  }
+  .fluent-input:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 1px var(--color-accent-primary);
+  }
+  .fluent-input::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+  }
+
+  .fluent-button {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border: 1px solid transparent;
+    padding: var(--spacing-s) var(--spacing-m);
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    min-width: 120px;
+  }
+  .fluent-button:hover:not(:disabled) {
+    background-color: var(--color-accent-primary-hover);
+    box-shadow: var(--shadow-depth-2);
+  }
+  .fluent-button:active:not(:disabled) {
+    background-color: var(--color-accent-primary-active);
+    box-shadow: none;
+  }
+  .fluent-button:disabled {
+    background-color: var(--color-neutral-stroke-default);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .fluent-alert-error {
+    background-color: color-mix(in srgb, var(--color-text-error) 10%, var(--color-neutral-layer-1));
+    color: var(--color-text-error);
+    border: 1px solid var(--color-text-error);
+    padding: var(--spacing-m);
+    border-radius: var(--border-radius-medium);
+    margin-top: var(--spacing-m);
+  }
+  /* Fluent CSS Definitions End */
 </style>

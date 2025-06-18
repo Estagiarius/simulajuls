@@ -9,5 +9,47 @@
   </head>
   <body data-sveltekit-preload-data="hover">
     <div style="display: contents">%sveltekit.body%</div>
+
+    <button id="theme-toggle" title="Toggle dark mode" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 8px 12px; background-color: var(--color-neutral-layer-1); color: var(--color-text-primary); border: 1px solid var(--color-neutral-stroke-default); border-radius: var(--border-radius-medium); cursor: pointer; box-shadow: var(--shadow-depth-4);">
+      Mode
+    </button>
+
+    <script>
+      (function() {
+        const toggleButton = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        const THEME_KEY = 'theme-preference';
+
+        function applyTheme(theme) {
+          htmlElement.setAttribute('data-theme', theme);
+          // Style the button itself based on the theme
+          if (toggleButton) {
+              // The button's inline styles already use CSS variables,
+              // so they should update automatically when the theme changes.
+              // No specific JS update needed here for the button's own style.
+          }
+        }
+
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        // Check system preference if no saved theme
+        let currentTheme = savedTheme;
+        if (!currentTheme) {
+            currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        // Default to light if somehow still no theme (e.g. localStorage disabled and no system pref)
+        currentTheme = currentTheme || 'light';
+
+        applyTheme(currentTheme);
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            currentTheme = htmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem(THEME_KEY, currentTheme);
+            applyTheme(currentTheme);
+          });
+        }
+      })();
+    <\/script>
   </body>
 </html>
