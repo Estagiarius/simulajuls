@@ -504,7 +504,7 @@
           <text x={padding.left + (svgWidth - padding.left - padding.right) / 2} y={svgHeight - padding.bottom + 35} text-anchor="middle" font-size="12" class="fill-current font-semibold">Volume do Titulante Adicionado (mL)</text>
 
           <!-- Titration Curve Path -->
-          <path d={svgPathD} fill="none" stroke="var(--color-primary, oklch(var(--p)))" stroke-width="2" /> <!-- Using DaisyUI primary color variable -->
+          <path d={svgPathD} fill="none" stroke="red" stroke-width="2" /> <!-- Using DaisyUI primary color variable -->
 
         </svg>
       </div>
