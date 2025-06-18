@@ -203,6 +203,7 @@
         titrationCurveData = []; // Clear previous graph data on error
       } else {
         const data = await response.json();
+        console.log('API Response Data:', data); // Added line
         simulationResults = data;
         if (data && data.titration_curve) {
           titrationCurveData = data.titration_curve;
