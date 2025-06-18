@@ -1,0 +1,110 @@
+/* frontend/src/fluent-theme.css */
+
+/* Global Variables based on Fluent Design */
+:root {
+  /* Typography */
+  --font-family-base: 'Segoe UI', 'ui-sans-serif', 'system-ui', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-caption: 0.75rem; /* 12px */
+  --font-size-body: 0.875rem;   /* 14px */
+  --font-size-subheader: 1rem; /* 16px */
+  --font-size-title: 1.25rem;   /* 20px */
+  --font-size-display: 2rem;    /* 32px */
+
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Color Palette (Simplified Fluent-inspired) */
+  /* Neutrals - Grays */
+  --color-neutral-background: #f3f3f3; /* Light gray for page background */
+  --color-neutral-layer-1: #ffffff;    /* White for card/surface backgrounds */
+  --color-neutral-layer-2: #f8f8f8;    /* Slightly off-white for hover or subtle layers */
+  --color-neutral-stroke-default: #d1d1d1; /* Default border color */
+  --color-neutral-stroke-strong: #616161;  /* Stronger border, secondary text */
+
+  /* Text */
+  --color-text-primary: #201f1e;       /* Dark gray for primary text */
+  --color-text-secondary: #605e5c;     /* Medium gray for secondary text */
+  --color-text-disabled: #c8c6c4;      /* Light gray for disabled text */
+
+  /* Accent Color (Example: Fluent Blue) */
+  --color-accent-primary: #0078d4;
+  --color-accent-primary-hover: #106ebe;
+  --color-accent-primary-active: #005a9e;
+  --color-text-on-accent: #ffffff;
+
+  /* System Colors */
+  --color-text-error: #d83b01; /* Fluent error red */
+
+  /* Spacing Unit */
+  --spacing-unit: 8px;
+  --spacing-xs: calc(var(--spacing-unit) * 0.5);  /* 4px */
+  --spacing-s: var(--spacing-unit);             /* 8px */
+  --spacing-m: calc(var(--spacing-unit) * 2);   /* 16px */
+  --spacing-l: calc(var(--spacing-unit) * 3);   /* 24px */
+  --spacing-xl: calc(var(--spacing-unit) * 4);  /* 32px */
+  --spacing-xxl: calc(var(--spacing-unit) * 6); /* 48px */
+
+  /* Borders and Shadows */
+  --border-radius-small: 4px;
+  --border-radius-medium: 6px;
+  --border-radius-large: 8px;
+
+  /* Standard Fluent Shadows (simplified) */
+  --shadow-depth-2: 0 0 2px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+  --shadow-depth-4: 0 0 2px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.12);
+  --shadow-depth-8: 0 0 2px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.12);
+  --shadow-depth-16: 0 0 2px rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.12);
+}
+
+/* Base Body Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-neutral-background);
+  line-height: 1.5;
+}
+
+/* Basic link styling */
+a {
+  color: var(--color-accent-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: var(--color-accent-primary-hover);
+}
+
+/* Headings using the type ramp */
+h1, .fluent-display {
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-m);
+}
+
+h2, .fluent-title {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--spacing-l);
+  margin-bottom: var(--spacing-s);
+}
+
+h3, .fluent-subheader {
+  font-size: var(--font-size-subheader);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--spacing-m);
+  margin-bottom: var(--spacing-xs);
+}
+
+p, span, div { /* Apply default body font size to common text containers if not overridden */
+    font-size: var(--font-size-body);
+}
+
+small, .fluent-caption {
+    font-size: var(--font-size-caption);
+}
