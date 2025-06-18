@@ -43,6 +43,7 @@
   }
 
   function updateChartVisuals() {
+    console.log('[updateChartVisuals] titrationCurveData:', JSON.parse(JSON.stringify(titrationCurveData)));
     if (!titrationCurveData || titrationCurveData.length === 0) {
       svgPathD = '';
       xAxisTicks = [];
@@ -52,14 +53,18 @@
 
     const xValues = titrationCurveData.map(d => d.titrant_volume_added_ml);
     const yValues = titrationCurveData.map(d => d.ph);
+    console.log('[updateChartVisuals] xValues:', xValues);
+    console.log('[updateChartVisuals] yValues:', yValues);
 
     const minX = Math.min(...xValues);
     const maxX = Math.max(...xValues);
+    console.log('[updateChartVisuals] minX:', minX, 'maxX:', maxX);
     const minY = 0;
     const maxY = 14;
 
     const drawableWidth = svgWidth - padding.left - padding.right;
     const drawableHeight = svgHeight - padding.top - padding.bottom;
+    console.log('[updateChartVisuals] drawableWidth:', drawableWidth, 'drawableHeight:', drawableHeight);
 
     const xScale = (val) => {
       if (maxX === minX) {
@@ -74,7 +79,12 @@
     };
 
     if (titrationCurveData.length > 0) {
-        svgPathD = "M" + titrationCurveData.map(d => `${xScale(d.titrant_volume_added_ml)},${yScale(d.ph)}`).join(" L");
+        console.log('[updateChartVisuals] Sample xScale(minX):', xScale(minX));
+        console.log('[updateChartVisuals] Sample yScale(yValues[0]):', yScale(yValues[0]));
+        if (titrationCurveData.length > 1) { console.log('[updateChartVisuals] Sample xScale(maxX):', xScale(maxX)); console.log('[updateChartVisuals] Sample yScale(yValues[yValues.length - 1]):', yScale(yValues[yValues.length - 1])); }
+        const generatedPath = "M" + titrationCurveData.map(d => `${xScale(d.titrant_volume_added_ml)},${yScale(d.ph)}`).join(" L");
+        console.log('[updateChartVisuals] Generated svgPathD:', generatedPath);
+        svgPathD = generatedPath;
     } else {
         svgPathD = '';
     }
