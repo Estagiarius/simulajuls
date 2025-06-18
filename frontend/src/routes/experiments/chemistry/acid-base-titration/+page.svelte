@@ -542,4 +542,3 @@
     stroke-linejoin: round;
   }
 </style>
-```
